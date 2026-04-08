@@ -2,6 +2,7 @@ package com.ksetrasevakah.app;
 
 import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.telephony.SmsManager;
 import android.view.View;
 import androidx.fragment.app.Fragment;
@@ -23,22 +24,32 @@ import com.ksetrasevakah.core.data.repository.PredictionRepositoryImpl;
 import com.ksetrasevakah.core.data.repository.TelemetryRepositoryImpl;
 import com.ksetrasevakah.core.database.KsetraDatabase;
 import com.ksetrasevakah.core.database.dao.BackupLogDao;
+import com.ksetrasevakah.core.database.dao.CameraConfigDao;
 import com.ksetrasevakah.core.database.dao.ChatMessageDao;
 import com.ksetrasevakah.core.database.dao.ChatThreadDao;
 import com.ksetrasevakah.core.database.dao.MotorStateDao;
 import com.ksetrasevakah.core.database.dao.PredictionCacheDao;
+import com.ksetrasevakah.core.database.dao.SecurityEventDao;
 import com.ksetrasevakah.core.database.dao.TelemetryDao;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideBackupLogDaoFactory;
+import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideCameraConfigDaoFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideChatMessageDaoFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideChatThreadDaoFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideDatabaseFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideMotorStateDaoFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvidePredictionCacheDaoFactory;
+import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideSecurityEventDaoFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideTelemetryDaoFactory;
+import com.ksetrasevakah.core.di.AppModule_ProvideApplicationContextFactory;
 import com.ksetrasevakah.core.domain.repository.ChatRepository;
 import com.ksetrasevakah.core.domain.repository.MotorStateRepository;
 import com.ksetrasevakah.core.domain.repository.PredictionRepository;
 import com.ksetrasevakah.core.domain.repository.TelemetryRepository;
+import com.ksetrasevakah.core.notification.CriticalAlarmManager;
+import com.ksetrasevakah.core.notification.KsetraNotificationManager;
+import com.ksetrasevakah.core.notification.TapoNotificationListener;
+import com.ksetrasevakah.core.notification.TapoNotificationListener_MembersInjector;
+import com.ksetrasevakah.core.notification.di.NotificationModule_ProvideKsetraNotificationManagerFactory;
 import com.ksetrasevakah.core.sms.DefaultSmsCommandSender;
 import com.ksetrasevakah.core.sms.SmsCommandSender;
 import com.ksetrasevakah.core.sms.di.SmsModule_Companion_ProvideSmsManagerFactory;
@@ -72,6 +83,22 @@ import com.ksetrasevakah.feature.settings.SettingsViewModel;
 import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules;
 import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
 import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel;
+import com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel_HiltModules;
+import com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel;
+import com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel_HiltModules;
+import com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.ksetrasevakah.feature.suraksha.data.repository.CameraConfigRepositoryImpl;
+import com.ksetrasevakah.feature.suraksha.data.repository.SecurityEventRepositoryImpl;
+import com.ksetrasevakah.feature.suraksha.domain.repository.CameraConfigRepository;
+import com.ksetrasevakah.feature.suraksha.domain.repository.SecurityEventRepository;
+import com.ksetrasevakah.feature.suraksha.prediction.ActivitySpikeDetector;
+import com.ksetrasevakah.feature.suraksha.prediction.SecurityBriefingGenerator;
+import com.ksetrasevakah.feature.suraksha.prediction.ThreatClassifier;
+import com.ksetrasevakah.feature.suraksha.prediction.ThreatRouter;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -432,7 +459,7 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(4).put(ChatViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, ChatViewModel_HiltModules.KeyModule.provide()).put(DashboardViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, DashboardViewModel_HiltModules.KeyModule.provide()).put(HubViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, HubViewModel_HiltModules.KeyModule.provide()).put(SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, SettingsViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(6).put(CameraMatrixViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, CameraMatrixViewModel_HiltModules.KeyModule.provide()).put(ChatViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, ChatViewModel_HiltModules.KeyModule.provide()).put(DashboardViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, DashboardViewModel_HiltModules.KeyModule.provide()).put(HubViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, HubViewModel_HiltModules.KeyModule.provide()).put(SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, SettingsViewModel_HiltModules.KeyModule.provide()).put(SurakshaDashboardViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, SurakshaDashboardViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -458,6 +485,8 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     private final ViewModelCImpl viewModelCImpl = this;
 
+    private Provider<CameraMatrixViewModel> cameraMatrixViewModelProvider;
+
     private Provider<ChatViewModel> chatViewModelProvider;
 
     private Provider<DashboardViewModel> dashboardViewModelProvider;
@@ -465,6 +494,8 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
     private Provider<HubViewModel> hubViewModelProvider;
 
     private Provider<SettingsViewModel> settingsViewModelProvider;
+
+    private Provider<SurakshaDashboardViewModel> surakshaDashboardViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
@@ -508,18 +539,24 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
       return new SendSmsCommandUseCase(singletonCImpl.bindSmsCommandSenderProvider.get(), singletonCImpl.motorStateDao());
     }
 
+    private SecurityBriefingGenerator securityBriefingGenerator() {
+      return new SecurityBriefingGenerator(singletonCImpl.bindMlcLlmEngineProvider.get(), singletonCImpl.bindSecurityEventRepositoryProvider.get());
+    }
+
     @SuppressWarnings("unchecked")
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
-      this.chatViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.dashboardViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
-      this.hubViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
-      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.cameraMatrixViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.chatViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.dashboardViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.hubViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
+      this.surakshaDashboardViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(4).put(ChatViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) chatViewModelProvider)).put(DashboardViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) dashboardViewModelProvider)).put(HubViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) hubViewModelProvider)).put(SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) settingsViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(6).put(CameraMatrixViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) cameraMatrixViewModelProvider)).put(ChatViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) chatViewModelProvider)).put(DashboardViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) dashboardViewModelProvider)).put(HubViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) hubViewModelProvider)).put(SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) settingsViewModelProvider)).put(SurakshaDashboardViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) surakshaDashboardViewModelProvider)).build());
     }
 
     @Override
@@ -548,17 +585,23 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel 
+          case 0: // com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel 
+          return (T) new CameraMatrixViewModel(singletonCImpl.bindCameraConfigRepositoryProvider.get());
+
+          case 1: // com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel 
           return (T) new ChatViewModel(viewModelCImpl.getChatThreadsUseCase(), viewModelCImpl.getChatMessagesUseCase(), viewModelCImpl.sendChatMessageUseCase(), viewModelCImpl.createChatThreadUseCase(), viewModelCImpl.chatOrchestrator());
 
-          case 1: // com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel 
+          case 2: // com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel 
           return (T) new DashboardViewModel(singletonCImpl.bindMotorStateRepositoryProvider.get(), singletonCImpl.bindTelemetryRepositoryProvider.get(), viewModelCImpl.sendSmsCommandUseCase());
 
-          case 2: // com.ksetrasevakah.feature.hub.HubViewModel 
+          case 3: // com.ksetrasevakah.feature.hub.HubViewModel 
           return (T) new HubViewModel();
 
-          case 3: // com.ksetrasevakah.feature.settings.SettingsViewModel 
+          case 4: // com.ksetrasevakah.feature.settings.SettingsViewModel 
           return (T) new SettingsViewModel(singletonCImpl.bindMotorStateRepositoryProvider.get(), singletonCImpl.provideBackupManagerProvider.get());
+
+          case 5: // com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel 
+          return (T) new SurakshaDashboardViewModel(singletonCImpl.bindSecurityEventRepositoryProvider.get(), viewModelCImpl.securityBriefingGenerator());
 
           default: throw new AssertionError(id);
         }
@@ -639,10 +682,21 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
       injectIngestionService2(ingestionService);
     }
 
+    @Override
+    public void injectTapoNotificationListener(TapoNotificationListener tapoNotificationListener) {
+      injectTapoNotificationListener2(tapoNotificationListener);
+    }
+
     private IngestionService injectIngestionService2(IngestionService instance) {
       IngestionService_MembersInjector.injectEngine(instance, singletonCImpl.bindMlcLlmEngineProvider.get());
       IngestionService_MembersInjector.injectTelemetryDao(instance, singletonCImpl.telemetryDao());
       return instance;
+    }
+
+    private TapoNotificationListener injectTapoNotificationListener2(
+        TapoNotificationListener instance2) {
+      TapoNotificationListener_MembersInjector.injectThreatRouter(instance2, singletonCImpl.threatRouterProvider.get());
+      return instance2;
     }
   }
 
@@ -652,6 +706,10 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
     private final SingletonCImpl singletonCImpl = this;
 
     private Provider<KsetraDatabase> provideDatabaseProvider;
+
+    private Provider<CameraConfigRepositoryImpl> cameraConfigRepositoryImplProvider;
+
+    private Provider<CameraConfigRepository> bindCameraConfigRepositoryProvider;
 
     private Provider<ChatRepositoryImpl> chatRepositoryImplProvider;
 
@@ -691,10 +749,31 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     private Provider<BackupManager> provideBackupManagerProvider;
 
+    private Provider<SecurityEventRepositoryImpl> securityEventRepositoryImplProvider;
+
+    private Provider<SecurityEventRepository> bindSecurityEventRepositoryProvider;
+
+    private Provider<ActivitySpikeDetector> activitySpikeDetectorProvider;
+
+    private Provider<ThreatClassifier> threatClassifierProvider;
+
+    private Provider<KsetraNotificationManager> provideKsetraNotificationManagerProvider;
+
+    private Provider<Context> provideApplicationContextProvider;
+
+    private Provider<CriticalAlarmManager> criticalAlarmManagerProvider;
+
+    private Provider<ThreatRouter> threatRouterProvider;
+
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
       initialize(applicationContextModuleParam);
+      initialize2(applicationContextModuleParam);
 
+    }
+
+    private CameraConfigDao cameraConfigDao() {
+      return DatabaseModule_ProvideCameraConfigDaoFactory.provideCameraConfigDao(provideDatabaseProvider.get());
     }
 
     private ChatThreadDao chatThreadDao() {
@@ -721,28 +800,46 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
       return DatabaseModule_ProvideBackupLogDaoFactory.provideBackupLogDao(provideDatabaseProvider.get());
     }
 
+    private SecurityEventDao securityEventDao() {
+      return DatabaseModule_ProvideSecurityEventDaoFactory.provideSecurityEventDao(provideDatabaseProvider.get());
+    }
+
     @SuppressWarnings("unchecked")
     private void initialize(final ApplicationContextModule applicationContextModuleParam) {
       this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<KsetraDatabase>(singletonCImpl, 1));
-      this.chatRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 0);
+      this.cameraConfigRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 0);
+      this.bindCameraConfigRepositoryProvider = DoubleCheck.provider((Provider) cameraConfigRepositoryImplProvider);
+      this.chatRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 2);
       this.bindChatRepositoryProvider = DoubleCheck.provider((Provider) chatRepositoryImplProvider);
-      this.defaultMlcLlmEngineProvider = new SwitchingProvider<>(singletonCImpl, 2);
+      this.defaultMlcLlmEngineProvider = new SwitchingProvider<>(singletonCImpl, 3);
       this.bindMlcLlmEngineProvider = DoubleCheck.provider((Provider) defaultMlcLlmEngineProvider);
-      this.provideModelManagerProvider = DoubleCheck.provider(new SwitchingProvider<ModelManager>(singletonCImpl, 3));
-      this.motorStateRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 4);
+      this.provideModelManagerProvider = DoubleCheck.provider(new SwitchingProvider<ModelManager>(singletonCImpl, 4));
+      this.motorStateRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 5);
       this.bindMotorStateRepositoryProvider = DoubleCheck.provider((Provider) motorStateRepositoryImplProvider);
-      this.predictionRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 5);
+      this.predictionRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 6);
       this.bindPredictionRepositoryProvider = DoubleCheck.provider((Provider) predictionRepositoryImplProvider);
-      this.provideEmbeddingGeneratorProvider = DoubleCheck.provider(new SwitchingProvider<EmbeddingGenerator>(singletonCImpl, 7));
-      this.provideVectorStoreManagerProvider = DoubleCheck.provider(new SwitchingProvider<VectorStoreManager>(singletonCImpl, 8));
-      this.provideRagPipelineProvider = DoubleCheck.provider(new SwitchingProvider<RagPipeline>(singletonCImpl, 6));
-      this.telemetryRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 9);
+      this.provideEmbeddingGeneratorProvider = DoubleCheck.provider(new SwitchingProvider<EmbeddingGenerator>(singletonCImpl, 8));
+      this.provideVectorStoreManagerProvider = DoubleCheck.provider(new SwitchingProvider<VectorStoreManager>(singletonCImpl, 9));
+      this.provideRagPipelineProvider = DoubleCheck.provider(new SwitchingProvider<RagPipeline>(singletonCImpl, 7));
+      this.telemetryRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 10);
       this.bindTelemetryRepositoryProvider = DoubleCheck.provider((Provider) telemetryRepositoryImplProvider);
-      this.provideSmsManagerProvider = DoubleCheck.provider(new SwitchingProvider<SmsManager>(singletonCImpl, 11));
-      this.defaultSmsCommandSenderProvider = new SwitchingProvider<>(singletonCImpl, 10);
+      this.provideSmsManagerProvider = DoubleCheck.provider(new SwitchingProvider<SmsManager>(singletonCImpl, 12));
+      this.defaultSmsCommandSenderProvider = new SwitchingProvider<>(singletonCImpl, 11);
       this.bindSmsCommandSenderProvider = DoubleCheck.provider((Provider) defaultSmsCommandSenderProvider);
-      this.provideDriveApiClientProvider = DoubleCheck.provider(new SwitchingProvider<DriveApiClient>(singletonCImpl, 13));
-      this.provideBackupManagerProvider = DoubleCheck.provider(new SwitchingProvider<BackupManager>(singletonCImpl, 12));
+      this.provideDriveApiClientProvider = DoubleCheck.provider(new SwitchingProvider<DriveApiClient>(singletonCImpl, 14));
+      this.provideBackupManagerProvider = DoubleCheck.provider(new SwitchingProvider<BackupManager>(singletonCImpl, 13));
+      this.securityEventRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 15);
+      this.bindSecurityEventRepositoryProvider = DoubleCheck.provider((Provider) securityEventRepositoryImplProvider);
+      this.activitySpikeDetectorProvider = DoubleCheck.provider(new SwitchingProvider<ActivitySpikeDetector>(singletonCImpl, 18));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initialize2(final ApplicationContextModule applicationContextModuleParam) {
+      this.threatClassifierProvider = DoubleCheck.provider(new SwitchingProvider<ThreatClassifier>(singletonCImpl, 17));
+      this.provideKsetraNotificationManagerProvider = DoubleCheck.provider(new SwitchingProvider<KsetraNotificationManager>(singletonCImpl, 19));
+      this.provideApplicationContextProvider = DoubleCheck.provider(new SwitchingProvider<Context>(singletonCImpl, 21));
+      this.criticalAlarmManagerProvider = DoubleCheck.provider(new SwitchingProvider<CriticalAlarmManager>(singletonCImpl, 20));
+      this.threatRouterProvider = DoubleCheck.provider(new SwitchingProvider<ThreatRouter>(singletonCImpl, 16));
     }
 
     @Override
@@ -778,47 +875,71 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.ksetrasevakah.core.data.repository.ChatRepositoryImpl 
-          return (T) new ChatRepositoryImpl(singletonCImpl.chatThreadDao(), singletonCImpl.chatMessageDao());
+          case 0: // com.ksetrasevakah.feature.suraksha.data.repository.CameraConfigRepositoryImpl 
+          return (T) new CameraConfigRepositoryImpl(singletonCImpl.cameraConfigDao());
 
           case 1: // com.ksetrasevakah.core.database.KsetraDatabase 
           return (T) DatabaseModule_ProvideDatabaseFactory.provideDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 2: // com.ksetrasevakah.core.ai.DefaultMlcLlmEngine 
+          case 2: // com.ksetrasevakah.core.data.repository.ChatRepositoryImpl 
+          return (T) new ChatRepositoryImpl(singletonCImpl.chatThreadDao(), singletonCImpl.chatMessageDao());
+
+          case 3: // com.ksetrasevakah.core.ai.DefaultMlcLlmEngine 
           return (T) new DefaultMlcLlmEngine();
 
-          case 3: // com.ksetrasevakah.core.ai.ModelManager 
+          case 4: // com.ksetrasevakah.core.ai.ModelManager 
           return (T) AiModule_Companion_ProvideModelManagerFactory.provideModelManager(singletonCImpl.bindMlcLlmEngineProvider.get());
 
-          case 4: // com.ksetrasevakah.core.data.repository.MotorStateRepositoryImpl 
+          case 5: // com.ksetrasevakah.core.data.repository.MotorStateRepositoryImpl 
           return (T) new MotorStateRepositoryImpl(singletonCImpl.motorStateDao());
 
-          case 5: // com.ksetrasevakah.core.data.repository.PredictionRepositoryImpl 
+          case 6: // com.ksetrasevakah.core.data.repository.PredictionRepositoryImpl 
           return (T) new PredictionRepositoryImpl(singletonCImpl.predictionCacheDao());
 
-          case 6: // com.ksetrasevakah.core.vectorstore.RagPipeline 
+          case 7: // com.ksetrasevakah.core.vectorstore.RagPipeline 
           return (T) VectorStoreModule_ProvideRagPipelineFactory.provideRagPipeline(singletonCImpl.provideEmbeddingGeneratorProvider.get(), singletonCImpl.provideVectorStoreManagerProvider.get());
 
-          case 7: // com.ksetrasevakah.core.vectorstore.EmbeddingGenerator 
+          case 8: // com.ksetrasevakah.core.vectorstore.EmbeddingGenerator 
           return (T) VectorStoreModule_ProvideEmbeddingGeneratorFactory.provideEmbeddingGenerator();
 
-          case 8: // com.ksetrasevakah.core.vectorstore.VectorStoreManager 
+          case 9: // com.ksetrasevakah.core.vectorstore.VectorStoreManager 
           return (T) VectorStoreModule_ProvideVectorStoreManagerFactory.provideVectorStoreManager();
 
-          case 9: // com.ksetrasevakah.core.data.repository.TelemetryRepositoryImpl 
+          case 10: // com.ksetrasevakah.core.data.repository.TelemetryRepositoryImpl 
           return (T) new TelemetryRepositoryImpl(singletonCImpl.telemetryDao());
 
-          case 10: // com.ksetrasevakah.core.sms.DefaultSmsCommandSender 
+          case 11: // com.ksetrasevakah.core.sms.DefaultSmsCommandSender 
           return (T) new DefaultSmsCommandSender(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideSmsManagerProvider.get());
 
-          case 11: // android.telephony.SmsManager 
+          case 12: // android.telephony.SmsManager 
           return (T) SmsModule_Companion_ProvideSmsManagerFactory.provideSmsManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 12: // com.ksetrasevakah.core.backup.BackupManager 
+          case 13: // com.ksetrasevakah.core.backup.BackupManager 
           return (T) BackupModule_ProvideBackupManagerFactory.provideBackupManager(singletonCImpl.provideDatabaseProvider.get(), singletonCImpl.backupLogDao(), singletonCImpl.provideDriveApiClientProvider.get());
 
-          case 13: // com.ksetrasevakah.core.backup.DriveApiClient 
+          case 14: // com.ksetrasevakah.core.backup.DriveApiClient 
           return (T) BackupModule_ProvideDriveApiClientFactory.provideDriveApiClient();
+
+          case 15: // com.ksetrasevakah.feature.suraksha.data.repository.SecurityEventRepositoryImpl 
+          return (T) new SecurityEventRepositoryImpl(singletonCImpl.securityEventDao());
+
+          case 16: // com.ksetrasevakah.feature.suraksha.prediction.ThreatRouter 
+          return (T) new ThreatRouter(singletonCImpl.threatClassifierProvider.get(), singletonCImpl.bindSecurityEventRepositoryProvider.get(), singletonCImpl.bindCameraConfigRepositoryProvider.get(), singletonCImpl.provideKsetraNotificationManagerProvider.get(), singletonCImpl.criticalAlarmManagerProvider.get());
+
+          case 17: // com.ksetrasevakah.feature.suraksha.prediction.ThreatClassifier 
+          return (T) new ThreatClassifier(singletonCImpl.bindMlcLlmEngineProvider.get(), singletonCImpl.activitySpikeDetectorProvider.get());
+
+          case 18: // com.ksetrasevakah.feature.suraksha.prediction.ActivitySpikeDetector 
+          return (T) new ActivitySpikeDetector(singletonCImpl.bindSecurityEventRepositoryProvider.get());
+
+          case 19: // com.ksetrasevakah.core.notification.KsetraNotificationManager 
+          return (T) NotificationModule_ProvideKsetraNotificationManagerFactory.provideKsetraNotificationManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
+
+          case 20: // com.ksetrasevakah.core.notification.CriticalAlarmManager 
+          return (T) new CriticalAlarmManager(singletonCImpl.provideApplicationContextProvider.get(), singletonCImpl.provideKsetraNotificationManagerProvider.get());
+
+          case 21: // android.content.Context 
+          return (T) AppModule_ProvideApplicationContextFactory.provideApplicationContext(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);
         }

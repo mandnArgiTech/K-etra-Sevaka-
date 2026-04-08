@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.core.vectorstore.RagPipelineTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:41" hostname="cursor" time="0.137">
+<testsuite name="com.ksetrasevakah.core.vectorstore.RagPipelineTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-08T19:28:42" hostname="cursor" time="0.125">
   <properties/>
-  <testcase name="query returns empty string when no results()" classname="com.ksetrasevakah.core.vectorstore.RagPipelineTest" time="0.115"/>
+  <testcase name="query returns empty string when no results()" classname="com.ksetrasevakah.core.vectorstore.RagPipelineTest" time="0.105"/>
   <testcase name="query returns formatted results()" classname="com.ksetrasevakah.core.vectorstore.RagPipelineTest" time="0.008"/>
-  <testcase name="ingest returns error when embedding fails()" classname="com.ksetrasevakah.core.vectorstore.RagPipelineTest" time="0.006"/>
-  <testcase name="ingest stores document with embedding()" classname="com.ksetrasevakah.core.vectorstore.RagPipelineTest" time="0.007"/>
+  <testcase name="ingest returns error when embedding fails()" classname="com.ksetrasevakah.core.vectorstore.RagPipelineTest" time="0.005"/>
+  <testcase name="ingest stores document with embedding()" classname="com.ksetrasevakah.core.vectorstore.RagPipelineTest" time="0.006"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

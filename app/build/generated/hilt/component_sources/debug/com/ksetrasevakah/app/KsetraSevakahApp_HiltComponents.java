@@ -8,6 +8,7 @@ import com.ksetrasevakah.core.backup.di.BackupModule;
 import com.ksetrasevakah.core.database.di.DatabaseModule;
 import com.ksetrasevakah.core.di.AppModule;
 import com.ksetrasevakah.core.di.RepositoryModule;
+import com.ksetrasevakah.core.notification.TapoNotificationListener_GeneratedInjector;
 import com.ksetrasevakah.core.notification.di.NotificationModule;
 import com.ksetrasevakah.core.sms.di.SmsModule;
 import com.ksetrasevakah.core.vectorstore.di.VectorStoreModule;
@@ -15,6 +16,9 @@ import com.ksetrasevakah.feature.hub.HubViewModel_HiltModules;
 import com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel_HiltModules;
 import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel_HiltModules;
 import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules;
+import com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel_HiltModules;
+import com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel_HiltModules;
+import com.ksetrasevakah.feature.suraksha.di.SurakshaModule;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -152,6 +156,7 @@ public final class KsetraSevakahApp_HiltComponents {
           NotificationModule.class,
           RepositoryModule.class,
           SmsModule.class,
+          SurakshaModule.class,
           VectorStoreModule.class
       }
   )
@@ -167,6 +172,7 @@ public final class KsetraSevakahApp_HiltComponents {
   @Subcomponent
   @ServiceScoped
   public abstract static class ServiceC implements IngestionService_GeneratedInjector,
+      TapoNotificationListener_GeneratedInjector,
       ServiceComponent,
       GeneratedComponent {
     @Subcomponent.Builder
@@ -176,6 +182,7 @@ public final class KsetraSevakahApp_HiltComponents {
 
   @Subcomponent(
       modules = {
+          CameraMatrixViewModel_HiltModules.KeyModule.class,
           ChatViewModel_HiltModules.KeyModule.class,
           DashboardViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
@@ -183,7 +190,8 @@ public final class KsetraSevakahApp_HiltComponents {
           HubViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
-          SettingsViewModel_HiltModules.KeyModule.class
+          SettingsViewModel_HiltModules.KeyModule.class,
+          SurakshaDashboardViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -219,11 +227,13 @@ public final class KsetraSevakahApp_HiltComponents {
 
   @Subcomponent(
       modules = {
+          CameraMatrixViewModel_HiltModules.BindsModule.class,
           ChatViewModel_HiltModules.BindsModule.class,
           DashboardViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           HubViewModel_HiltModules.BindsModule.class,
-          SettingsViewModel_HiltModules.BindsModule.class
+          SettingsViewModel_HiltModules.BindsModule.class,
+          SurakshaDashboardViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.ksetrasevakah.app-mergeDebugResources-65:/values-v23/values-v23.xml",
+            "outputFile": "com.ksetrasevakah.app-mergeDebugResources-66:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/home/ubuntu/.gradle/caches/8.11.1/transforms/5fbb778f5241977ea1dc8761787b37df/transformed/work-runtime-2.10.0/res/values-v23/values-v23.xml",
+                    "source": "/home/ubuntu/.gradle/caches/8.11.1/transforms/8dd7d577f3754454bf7f348fe2c6e650/transformed/work-runtime-2.10.0/res/values-v23/values-v23.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

@@ -1,0 +1,2 @@
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.core.notification.CriticalAlarmManagerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T19:30:03" hostname="cursor" time="0.574">
+  <properties/>
+  <testcase name="triggerCriticalAlarm posts notification()" classname="com.ksetrasevakah.core.notification.CriticalAlarmManagerTest" time="0.548"/>
+  <testcase name="dismiss cancels alarm notification()" classname="com.ksetrasevakah.core.notification.CriticalAlarmManagerTest" time="0.009"/>
+  <testcase name="triggerCriticalAlarm calls both post and alarm()" classname="com.ksetrasevakah.core.notification.CriticalAlarmManagerTest" time="0.006"/>
+  <testcase name="dismiss can be called multiple times safely()" classname="com.ksetrasevakah.core.notification.CriticalAlarmManagerTest" time="0.006"/>
+  <testcase name="triggerCriticalAlarm starts alarm sequence()" classname="com.ksetrasevakah.core.notification.CriticalAlarmManagerTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

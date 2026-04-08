@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:42" hostname="cursor" time="0.002">
+<testsuite name="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T19:28:43" hostname="cursor" time="0.004">
   <properties/>
-  <testcase name="high consistency yields high confidence()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.0"/>
-  <testcase name="computes standard deviation()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.0"/>
+  <testcase name="high consistency yields high confidence()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.001"/>
+  <testcase name="computes standard deviation()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.001"/>
   <testcase name="returns insufficient data when fewer than 3 activities()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.0"/>
   <testcase name="predicts average ON hour and minute()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.0"/>
   <testcase name="skips entries with null onTime()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.0"/>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:39" hostname="cursor" time="0.015">
+<testsuite name="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T19:28:39" hostname="cursor" time="0.015">
   <properties/>
   <testcase name="regex fallback returns Error when no data extracted()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.003"/>
-  <testcase name="regex fallback parses common SMS format()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.007"/>
-  <testcase name="parseResponse handles null fields()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.002"/>
-  <testcase name="parseResponse handles JSON with surrounding text()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.001"/>
-  <testcase name="parseResponse extracts valid JSON()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.001"/>
-  <testcase name="parseResponse falls back to regex on invalid JSON()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.001"/>
+  <testcase name="regex fallback parses common SMS format()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.006"/>
+  <testcase name="parseResponse handles null fields()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.001"/>
+  <testcase name="parseResponse handles JSON with surrounding text()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.0"/>
+  <testcase name="parseResponse extracts valid JSON()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.0"/>
+  <testcase name="parseResponse falls back to regex on invalid JSON()" classname="com.ksetrasevakah.core.ai.parser.TelemetryParserTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModelTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-08T19:30:06" hostname="cursor" time="0.066">
+  <properties/>
+  <testcase name="retry reloads cameras()" classname="com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModelTest" time="0.051"/>
+  <testcase name="error from repository is reflected in UI state()" classname="com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModelTest" time="0.004"/>
+  <testcase name="change camera mode calls repository()" classname="com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModelTest" time="0.008"/>
+  <testcase name="initial state loads cameras successfully()" classname="com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModelTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

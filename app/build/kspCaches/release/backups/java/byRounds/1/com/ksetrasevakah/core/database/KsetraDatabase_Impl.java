@@ -13,6 +13,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import com.ksetrasevakah.core.database.dao.BackupLogDao;
 import com.ksetrasevakah.core.database.dao.BackupLogDao_Impl;
+import com.ksetrasevakah.core.database.dao.CameraConfigDao;
+import com.ksetrasevakah.core.database.dao.CameraConfigDao_Impl;
 import com.ksetrasevakah.core.database.dao.ChatMessageDao;
 import com.ksetrasevakah.core.database.dao.ChatMessageDao_Impl;
 import com.ksetrasevakah.core.database.dao.ChatThreadDao;
@@ -23,6 +25,10 @@ import com.ksetrasevakah.core.database.dao.MotorStateDao;
 import com.ksetrasevakah.core.database.dao.MotorStateDao_Impl;
 import com.ksetrasevakah.core.database.dao.PredictionCacheDao;
 import com.ksetrasevakah.core.database.dao.PredictionCacheDao_Impl;
+import com.ksetrasevakah.core.database.dao.SecurityBriefingDao;
+import com.ksetrasevakah.core.database.dao.SecurityBriefingDao_Impl;
+import com.ksetrasevakah.core.database.dao.SecurityEventDao;
+import com.ksetrasevakah.core.database.dao.SecurityEventDao_Impl;
 import com.ksetrasevakah.core.database.dao.TelemetryDao;
 import com.ksetrasevakah.core.database.dao.TelemetryDao_Impl;
 import com.ksetrasevakah.core.database.dao.WorkerActivityDao;
@@ -59,10 +65,16 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
 
   private volatile BackupLogDao _backupLogDao;
 
+  private volatile SecurityEventDao _securityEventDao;
+
+  private volatile CameraConfigDao _cameraConfigDao;
+
+  private volatile SecurityBriefingDao _securityBriefingDao;
+
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(1) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `motor_state` (`id` INTEGER NOT NULL, `state` TEXT NOT NULL, `last_on_time` INTEGER, `last_off_time` INTEGER, `current_session_start` INTEGER, `pending_command` TEXT, `pending_since` INTEGER, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`id`))");
@@ -77,8 +89,16 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
         db.execSQL("CREATE TABLE IF NOT EXISTS `chat_messages` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `thread_id` INTEGER NOT NULL, `role` TEXT NOT NULL, `text` TEXT NOT NULL, `created_at` INTEGER NOT NULL, FOREIGN KEY(`thread_id`) REFERENCES `chat_threads`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
         db.execSQL("CREATE INDEX IF NOT EXISTS `index_chat_messages_thread_id` ON `chat_messages` (`thread_id`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS `backup_log` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `type` TEXT NOT NULL, `status` TEXT NOT NULL, `file_size_bytes` INTEGER, `error_message` TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `security_events` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `camera_name` TEXT NOT NULL, `event_type` TEXT NOT NULL, `threat_level` TEXT NOT NULL, `confidence` REAL NOT NULL, `origin_timestamp` INTEGER NOT NULL, `received_timestamp` INTEGER NOT NULL, `hour_of_day` INTEGER NOT NULL, `summary` TEXT, `acknowledged` INTEGER NOT NULL)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_security_events_camera_name` ON `security_events` (`camera_name`)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_security_events_origin_timestamp` ON `security_events` (`origin_timestamp`)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_security_events_threat_level` ON `security_events` (`threat_level`)");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_security_events_hour_of_day` ON `security_events` (`hour_of_day`)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `camera_config` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `camera_name` TEXT NOT NULL, `mode` TEXT NOT NULL, `last_seen` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)");
+        db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_camera_config_camera_name` ON `camera_config` (`camera_name`)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `security_briefings` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `generated_at` INTEGER NOT NULL, `period_start` INTEGER NOT NULL, `period_end` INTEGER NOT NULL, `summary` TEXT NOT NULL, `total_events` INTEGER NOT NULL, `critical_count` INTEGER NOT NULL, `high_count` INTEGER NOT NULL)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a4b9ae489f6ab74811ea9702347428e9')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e26a4aaac0122a11e28bb431a3b5286a')");
       }
 
       @Override
@@ -91,6 +111,9 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
         db.execSQL("DROP TABLE IF EXISTS `chat_threads`");
         db.execSQL("DROP TABLE IF EXISTS `chat_messages`");
         db.execSQL("DROP TABLE IF EXISTS `backup_log`");
+        db.execSQL("DROP TABLE IF EXISTS `security_events`");
+        db.execSQL("DROP TABLE IF EXISTS `camera_config`");
+        db.execSQL("DROP TABLE IF EXISTS `security_briefings`");
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
           for (RoomDatabase.Callback _callback : _callbacks) {
@@ -272,9 +295,67 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
                   + " Expected:\n" + _infoBackupLog + "\n"
                   + " Found:\n" + _existingBackupLog);
         }
+        final HashMap<String, TableInfo.Column> _columnsSecurityEvents = new HashMap<String, TableInfo.Column>(10);
+        _columnsSecurityEvents.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("camera_name", new TableInfo.Column("camera_name", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("event_type", new TableInfo.Column("event_type", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("threat_level", new TableInfo.Column("threat_level", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("confidence", new TableInfo.Column("confidence", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("origin_timestamp", new TableInfo.Column("origin_timestamp", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("received_timestamp", new TableInfo.Column("received_timestamp", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("hour_of_day", new TableInfo.Column("hour_of_day", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("summary", new TableInfo.Column("summary", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityEvents.put("acknowledged", new TableInfo.Column("acknowledged", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysSecurityEvents = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesSecurityEvents = new HashSet<TableInfo.Index>(4);
+        _indicesSecurityEvents.add(new TableInfo.Index("index_security_events_camera_name", false, Arrays.asList("camera_name"), Arrays.asList("ASC")));
+        _indicesSecurityEvents.add(new TableInfo.Index("index_security_events_origin_timestamp", false, Arrays.asList("origin_timestamp"), Arrays.asList("ASC")));
+        _indicesSecurityEvents.add(new TableInfo.Index("index_security_events_threat_level", false, Arrays.asList("threat_level"), Arrays.asList("ASC")));
+        _indicesSecurityEvents.add(new TableInfo.Index("index_security_events_hour_of_day", false, Arrays.asList("hour_of_day"), Arrays.asList("ASC")));
+        final TableInfo _infoSecurityEvents = new TableInfo("security_events", _columnsSecurityEvents, _foreignKeysSecurityEvents, _indicesSecurityEvents);
+        final TableInfo _existingSecurityEvents = TableInfo.read(db, "security_events");
+        if (!_infoSecurityEvents.equals(_existingSecurityEvents)) {
+          return new RoomOpenHelper.ValidationResult(false, "security_events(com.ksetrasevakah.core.database.entity.SecurityEventEntity).\n"
+                  + " Expected:\n" + _infoSecurityEvents + "\n"
+                  + " Found:\n" + _existingSecurityEvents);
+        }
+        final HashMap<String, TableInfo.Column> _columnsCameraConfig = new HashMap<String, TableInfo.Column>(5);
+        _columnsCameraConfig.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCameraConfig.put("camera_name", new TableInfo.Column("camera_name", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCameraConfig.put("mode", new TableInfo.Column("mode", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCameraConfig.put("last_seen", new TableInfo.Column("last_seen", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCameraConfig.put("created_at", new TableInfo.Column("created_at", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysCameraConfig = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesCameraConfig = new HashSet<TableInfo.Index>(1);
+        _indicesCameraConfig.add(new TableInfo.Index("index_camera_config_camera_name", true, Arrays.asList("camera_name"), Arrays.asList("ASC")));
+        final TableInfo _infoCameraConfig = new TableInfo("camera_config", _columnsCameraConfig, _foreignKeysCameraConfig, _indicesCameraConfig);
+        final TableInfo _existingCameraConfig = TableInfo.read(db, "camera_config");
+        if (!_infoCameraConfig.equals(_existingCameraConfig)) {
+          return new RoomOpenHelper.ValidationResult(false, "camera_config(com.ksetrasevakah.core.database.entity.CameraConfigEntity).\n"
+                  + " Expected:\n" + _infoCameraConfig + "\n"
+                  + " Found:\n" + _existingCameraConfig);
+        }
+        final HashMap<String, TableInfo.Column> _columnsSecurityBriefings = new HashMap<String, TableInfo.Column>(8);
+        _columnsSecurityBriefings.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityBriefings.put("generated_at", new TableInfo.Column("generated_at", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityBriefings.put("period_start", new TableInfo.Column("period_start", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityBriefings.put("period_end", new TableInfo.Column("period_end", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityBriefings.put("summary", new TableInfo.Column("summary", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityBriefings.put("total_events", new TableInfo.Column("total_events", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityBriefings.put("critical_count", new TableInfo.Column("critical_count", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsSecurityBriefings.put("high_count", new TableInfo.Column("high_count", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysSecurityBriefings = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesSecurityBriefings = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoSecurityBriefings = new TableInfo("security_briefings", _columnsSecurityBriefings, _foreignKeysSecurityBriefings, _indicesSecurityBriefings);
+        final TableInfo _existingSecurityBriefings = TableInfo.read(db, "security_briefings");
+        if (!_infoSecurityBriefings.equals(_existingSecurityBriefings)) {
+          return new RoomOpenHelper.ValidationResult(false, "security_briefings(com.ksetrasevakah.core.database.entity.SecurityBriefingEntity).\n"
+                  + " Expected:\n" + _infoSecurityBriefings + "\n"
+                  + " Found:\n" + _existingSecurityBriefings);
+        }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "a4b9ae489f6ab74811ea9702347428e9", "a82bf168370f54014ce0a3ebf4bba7a9");
+    }, "e26a4aaac0122a11e28bb431a3b5286a", "e1472dc6f0346a3d45a53f283a5c30d7");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;
@@ -285,7 +366,7 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
   protected InvalidationTracker createInvalidationTracker() {
     final HashMap<String, String> _shadowTablesMap = new HashMap<String, String>(0);
     final HashMap<String, Set<String>> _viewTables = new HashMap<String, Set<String>>(0);
-    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "motor_state","telemetry_log","fault_log","worker_activity","prediction_cache","chat_threads","chat_messages","backup_log");
+    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "motor_state","telemetry_log","fault_log","worker_activity","prediction_cache","chat_threads","chat_messages","backup_log","security_events","camera_config","security_briefings");
   }
 
   @Override
@@ -309,6 +390,9 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
       _db.execSQL("DELETE FROM `chat_threads`");
       _db.execSQL("DELETE FROM `chat_messages`");
       _db.execSQL("DELETE FROM `backup_log`");
+      _db.execSQL("DELETE FROM `security_events`");
+      _db.execSQL("DELETE FROM `camera_config`");
+      _db.execSQL("DELETE FROM `security_briefings`");
       super.setTransactionSuccessful();
     } finally {
       super.endTransaction();
@@ -334,6 +418,9 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
     _typeConvertersMap.put(ChatThreadDao.class, ChatThreadDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(ChatMessageDao.class, ChatMessageDao_Impl.getRequiredConverters());
     _typeConvertersMap.put(BackupLogDao.class, BackupLogDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(SecurityEventDao.class, SecurityEventDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(CameraConfigDao.class, CameraConfigDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(SecurityBriefingDao.class, SecurityBriefingDao_Impl.getRequiredConverters());
     return _typeConvertersMap;
   }
 
@@ -460,6 +547,48 @@ public final class KsetraDatabase_Impl extends KsetraDatabase {
           _backupLogDao = new BackupLogDao_Impl(this);
         }
         return _backupLogDao;
+      }
+    }
+  }
+
+  @Override
+  public SecurityEventDao securityEventDao() {
+    if (_securityEventDao != null) {
+      return _securityEventDao;
+    } else {
+      synchronized(this) {
+        if(_securityEventDao == null) {
+          _securityEventDao = new SecurityEventDao_Impl(this);
+        }
+        return _securityEventDao;
+      }
+    }
+  }
+
+  @Override
+  public CameraConfigDao cameraConfigDao() {
+    if (_cameraConfigDao != null) {
+      return _cameraConfigDao;
+    } else {
+      synchronized(this) {
+        if(_cameraConfigDao == null) {
+          _cameraConfigDao = new CameraConfigDao_Impl(this);
+        }
+        return _cameraConfigDao;
+      }
+    }
+  }
+
+  @Override
+  public SecurityBriefingDao securityBriefingDao() {
+    if (_securityBriefingDao != null) {
+      return _securityBriefingDao;
+    } else {
+      synchronized(this) {
+        if(_securityBriefingDao == null) {
+          _securityBriefingDao = new SecurityBriefingDao_Impl(this);
+        }
+        return _securityBriefingDao;
       }
     }
   }

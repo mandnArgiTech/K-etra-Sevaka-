@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.core.sms.MotorStateMachineTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:22" hostname="cursor" time="0.146">
+<testsuite name="com.ksetrasevakah.core.sms.MotorStateMachineTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-04-08T19:30:04" hostname="cursor" time="0.151">
   <properties/>
-  <testcase name="sendStop from ON transitions to PENDING_STOP()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.05"/>
+  <testcase name="sendStop from ON transitions to PENDING_STOP()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.046"/>
   <testcase name="sendStart from ON stays ON()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.007"/>
-  <testcase name="processConfirmation unknown body keeps current state()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.004"/>
-  <testcase name="handleTimeout reverts PENDING_STOP to ON after 30s()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.006"/>
-  <testcase name="processConfirmation MOTOR OFF transitions to OFF()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.046"/>
-  <testcase name="sendStart from PENDING_START stays PENDING_START()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.003"/>
-  <testcase name="processConfirmation MOTOR ON transitions to ON()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.009"/>
+  <testcase name="processConfirmation unknown body keeps current state()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.005"/>
+  <testcase name="handleTimeout reverts PENDING_STOP to ON after 30s()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.007"/>
+  <testcase name="processConfirmation MOTOR OFF transitions to OFF()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.051"/>
+  <testcase name="sendStart from PENDING_START stays PENDING_START()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.004"/>
+  <testcase name="processConfirmation MOTOR ON transitions to ON()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.011"/>
   <testcase name="sendStart from OFF transitions to PENDING_START()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.006"/>
-  <testcase name="sendStop from OFF stays OFF()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.003"/>
-  <testcase name="handleTimeout reverts PENDING_START to OFF after 30s()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.006"/>
+  <testcase name="sendStop from OFF stays OFF()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.004"/>
+  <testcase name="handleTimeout reverts PENDING_START to OFF after 30s()" classname="com.ksetrasevakah.core.sms.MotorStateMachineTest" time="0.007"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
