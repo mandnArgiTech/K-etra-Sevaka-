@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.core.common.ResultTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:07:37" hostname="cursor" time="0.054">
+  <properties/>
+  <testcase name="getOrNull returns data for Success()" classname="com.ksetrasevakah.core.common.ResultTest" time="0.039"/>
+  <testcase name="getOrNull returns null for Error()" classname="com.ksetrasevakah.core.common.ResultTest" time="0.003"/>
+  <testcase name="getOrThrow throws for Error()" classname="com.ksetrasevakah.core.common.ResultTest" time="0.002"/>
+  <testcase name="Error wraps message and throwable()" classname="com.ksetrasevakah.core.common.ResultTest" time="0.001"/>
+  <testcase name="Success wraps data correctly()" classname="com.ksetrasevakah.core.common.ResultTest" time="0.0"/>
+  <testcase name="isSuccess isError isLoading flags are correct()" classname="com.ksetrasevakah.core.common.ResultTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
