@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:34:41" hostname="cursor" time="0.282">
+<testsuite name="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:21" hostname="cursor" time="0.259">
   <properties/>
-  <testcase name="observeRecent emits Success with telemetry list()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.043"/>
+  <testcase name="observeRecent emits Success with telemetry list()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.042"/>
   <testcase name="insert returns Success with row id()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.012"/>
-  <testcase name="getAvgVoltage returns Success with value()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.006"/>
-  <testcase name="insert returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.005"/>
+  <testcase name="getAvgVoltage returns Success with value()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.005"/>
+  <testcase name="insert returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.004"/>
   <testcase name="getAvgVoltage returns Success with null when no data()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.004"/>
   <testcase name="observeRecent emits Success with empty list()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.005"/>
-  <testcase name="getRecentList returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.191"/>
-  <testcase name="getAvgVoltage returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.004"/>
-  <testcase name="getRecentList returns Success on happy path()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.008"/>
+  <testcase name="getRecentList returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.172"/>
+  <testcase name="getAvgVoltage returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.005"/>
+  <testcase name="getRecentList returns Success on happy path()" classname="com.ksetrasevakah.core.data.repository.TelemetryRepositoryImplTest" time="0.009"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

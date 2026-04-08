@@ -1,0 +1,8 @@
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.hub.HubViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.hub.HubViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.settings.SettingsViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.settings.SettingsViewModel

@@ -11,28 +11,67 @@ import com.ksetrasevakah.core.ai.DefaultMlcLlmEngine;
 import com.ksetrasevakah.core.ai.IngestionService;
 import com.ksetrasevakah.core.ai.IngestionService_MembersInjector;
 import com.ksetrasevakah.core.ai.MlcLlmEngine;
+import com.ksetrasevakah.core.ai.ModelManager;
+import com.ksetrasevakah.core.ai.di.AiModule_Companion_ProvideModelManagerFactory;
+import com.ksetrasevakah.core.backup.BackupManager;
+import com.ksetrasevakah.core.backup.DriveApiClient;
+import com.ksetrasevakah.core.backup.di.BackupModule_ProvideBackupManagerFactory;
+import com.ksetrasevakah.core.backup.di.BackupModule_ProvideDriveApiClientFactory;
+import com.ksetrasevakah.core.data.repository.ChatRepositoryImpl;
 import com.ksetrasevakah.core.data.repository.MotorStateRepositoryImpl;
+import com.ksetrasevakah.core.data.repository.PredictionRepositoryImpl;
 import com.ksetrasevakah.core.data.repository.TelemetryRepositoryImpl;
 import com.ksetrasevakah.core.database.KsetraDatabase;
+import com.ksetrasevakah.core.database.dao.BackupLogDao;
+import com.ksetrasevakah.core.database.dao.ChatMessageDao;
+import com.ksetrasevakah.core.database.dao.ChatThreadDao;
 import com.ksetrasevakah.core.database.dao.MotorStateDao;
+import com.ksetrasevakah.core.database.dao.PredictionCacheDao;
 import com.ksetrasevakah.core.database.dao.TelemetryDao;
+import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideBackupLogDaoFactory;
+import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideChatMessageDaoFactory;
+import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideChatThreadDaoFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideDatabaseFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideMotorStateDaoFactory;
+import com.ksetrasevakah.core.database.di.DatabaseModule_ProvidePredictionCacheDaoFactory;
 import com.ksetrasevakah.core.database.di.DatabaseModule_ProvideTelemetryDaoFactory;
+import com.ksetrasevakah.core.domain.repository.ChatRepository;
 import com.ksetrasevakah.core.domain.repository.MotorStateRepository;
+import com.ksetrasevakah.core.domain.repository.PredictionRepository;
 import com.ksetrasevakah.core.domain.repository.TelemetryRepository;
 import com.ksetrasevakah.core.sms.DefaultSmsCommandSender;
 import com.ksetrasevakah.core.sms.SmsCommandSender;
 import com.ksetrasevakah.core.sms.di.SmsModule_Companion_ProvideSmsManagerFactory;
+import com.ksetrasevakah.core.vectorstore.EmbeddingGenerator;
+import com.ksetrasevakah.core.vectorstore.RagPipeline;
+import com.ksetrasevakah.core.vectorstore.VectorStoreManager;
+import com.ksetrasevakah.core.vectorstore.di.VectorStoreModule_ProvideEmbeddingGeneratorFactory;
+import com.ksetrasevakah.core.vectorstore.di.VectorStoreModule_ProvideRagPipelineFactory;
+import com.ksetrasevakah.core.vectorstore.di.VectorStoreModule_ProvideVectorStoreManagerFactory;
 import com.ksetrasevakah.feature.hub.HubViewModel;
 import com.ksetrasevakah.feature.hub.HubViewModel_HiltModules;
 import com.ksetrasevakah.feature.hub.HubViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
 import com.ksetrasevakah.feature.hub.HubViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.ksetrasevakah.feature.pumpiq.chat.ChatOrchestrator;
+import com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel;
+import com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel_HiltModules;
+import com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
+import com.ksetrasevakah.feature.pumpiq.chat.domain.usecase.CreateChatThreadUseCase;
+import com.ksetrasevakah.feature.pumpiq.chat.domain.usecase.GetChatMessagesUseCase;
+import com.ksetrasevakah.feature.pumpiq.chat.domain.usecase.GetChatThreadsUseCase;
+import com.ksetrasevakah.feature.pumpiq.chat.domain.usecase.SendChatMessageUseCase;
+import com.ksetrasevakah.feature.pumpiq.chat.prompt.ContextAssembler;
+import com.ksetrasevakah.feature.pumpiq.chat.prompt.SystemPromptBuilder;
 import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel;
 import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel_HiltModules;
 import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
 import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
 import com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCase;
+import com.ksetrasevakah.feature.settings.SettingsViewModel;
+import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules;
+import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey;
+import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey;
 import dagger.hilt.android.ActivityRetainedLifecycle;
 import dagger.hilt.android.ViewModelLifecycle;
 import dagger.hilt.android.internal.builders.ActivityComponentBuilder;
@@ -393,7 +432,7 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(2).put(DashboardViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, DashboardViewModel_HiltModules.KeyModule.provide()).put(HubViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, HubViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(4).put(ChatViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, ChatViewModel_HiltModules.KeyModule.provide()).put(DashboardViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, DashboardViewModel_HiltModules.KeyModule.provide()).put(HubViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, HubViewModel_HiltModules.KeyModule.provide()).put(SettingsViewModel_HiltModules_KeyModule_Provide_LazyMapKey.lazyClassKeyName, SettingsViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -419,9 +458,13 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     private final ViewModelCImpl viewModelCImpl = this;
 
+    private Provider<ChatViewModel> chatViewModelProvider;
+
     private Provider<DashboardViewModel> dashboardViewModelProvider;
 
     private Provider<HubViewModel> hubViewModelProvider;
+
+    private Provider<SettingsViewModel> settingsViewModelProvider;
 
     private ViewModelCImpl(SingletonCImpl singletonCImpl,
         ActivityRetainedCImpl activityRetainedCImpl, SavedStateHandle savedStateHandleParam,
@@ -433,6 +476,34 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     }
 
+    private GetChatThreadsUseCase getChatThreadsUseCase() {
+      return new GetChatThreadsUseCase(singletonCImpl.bindChatRepositoryProvider.get());
+    }
+
+    private GetChatMessagesUseCase getChatMessagesUseCase() {
+      return new GetChatMessagesUseCase(singletonCImpl.bindChatRepositoryProvider.get());
+    }
+
+    private SendChatMessageUseCase sendChatMessageUseCase() {
+      return new SendChatMessageUseCase(singletonCImpl.bindChatRepositoryProvider.get());
+    }
+
+    private CreateChatThreadUseCase createChatThreadUseCase() {
+      return new CreateChatThreadUseCase(singletonCImpl.bindChatRepositoryProvider.get());
+    }
+
+    private SystemPromptBuilder systemPromptBuilder() {
+      return new SystemPromptBuilder(singletonCImpl.bindMotorStateRepositoryProvider.get(), singletonCImpl.bindPredictionRepositoryProvider.get(), singletonCImpl.provideRagPipelineProvider.get());
+    }
+
+    private ContextAssembler contextAssembler() {
+      return new ContextAssembler(singletonCImpl.bindChatRepositoryProvider.get());
+    }
+
+    private ChatOrchestrator chatOrchestrator() {
+      return new ChatOrchestrator(singletonCImpl.bindMlcLlmEngineProvider.get(), singletonCImpl.provideModelManagerProvider.get(), singletonCImpl.bindChatRepositoryProvider.get(), systemPromptBuilder(), contextAssembler());
+    }
+
     private SendSmsCommandUseCase sendSmsCommandUseCase() {
       return new SendSmsCommandUseCase(singletonCImpl.bindSmsCommandSenderProvider.get(), singletonCImpl.motorStateDao());
     }
@@ -440,13 +511,15 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
     @SuppressWarnings("unchecked")
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
-      this.dashboardViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.hubViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.chatViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
+      this.dashboardViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.hubViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.settingsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(2).put(DashboardViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) dashboardViewModelProvider)).put(HubViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) hubViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(4).put(ChatViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) chatViewModelProvider)).put(DashboardViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) dashboardViewModelProvider)).put(HubViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) hubViewModelProvider)).put(SettingsViewModel_HiltModules_BindsModule_Binds_LazyMapKey.lazyClassKeyName, ((Provider) settingsViewModelProvider)).build());
     }
 
     @Override
@@ -475,11 +548,17 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel 
+          case 0: // com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel 
+          return (T) new ChatViewModel(viewModelCImpl.getChatThreadsUseCase(), viewModelCImpl.getChatMessagesUseCase(), viewModelCImpl.sendChatMessageUseCase(), viewModelCImpl.createChatThreadUseCase(), viewModelCImpl.chatOrchestrator());
+
+          case 1: // com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel 
           return (T) new DashboardViewModel(singletonCImpl.bindMotorStateRepositoryProvider.get(), singletonCImpl.bindTelemetryRepositoryProvider.get(), viewModelCImpl.sendSmsCommandUseCase());
 
-          case 1: // com.ksetrasevakah.feature.hub.HubViewModel 
+          case 2: // com.ksetrasevakah.feature.hub.HubViewModel 
           return (T) new HubViewModel();
+
+          case 3: // com.ksetrasevakah.feature.settings.SettingsViewModel 
+          return (T) new SettingsViewModel(singletonCImpl.bindMotorStateRepositoryProvider.get(), singletonCImpl.provideBackupManagerProvider.get());
 
           default: throw new AssertionError(id);
         }
@@ -574,9 +653,29 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     private Provider<KsetraDatabase> provideDatabaseProvider;
 
+    private Provider<ChatRepositoryImpl> chatRepositoryImplProvider;
+
+    private Provider<ChatRepository> bindChatRepositoryProvider;
+
+    private Provider<DefaultMlcLlmEngine> defaultMlcLlmEngineProvider;
+
+    private Provider<MlcLlmEngine> bindMlcLlmEngineProvider;
+
+    private Provider<ModelManager> provideModelManagerProvider;
+
     private Provider<MotorStateRepositoryImpl> motorStateRepositoryImplProvider;
 
     private Provider<MotorStateRepository> bindMotorStateRepositoryProvider;
+
+    private Provider<PredictionRepositoryImpl> predictionRepositoryImplProvider;
+
+    private Provider<PredictionRepository> bindPredictionRepositoryProvider;
+
+    private Provider<EmbeddingGenerator> provideEmbeddingGeneratorProvider;
+
+    private Provider<VectorStoreManager> provideVectorStoreManagerProvider;
+
+    private Provider<RagPipeline> provideRagPipelineProvider;
 
     private Provider<TelemetryRepositoryImpl> telemetryRepositoryImplProvider;
 
@@ -588,9 +687,9 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     private Provider<SmsCommandSender> bindSmsCommandSenderProvider;
 
-    private Provider<DefaultMlcLlmEngine> defaultMlcLlmEngineProvider;
+    private Provider<DriveApiClient> provideDriveApiClientProvider;
 
-    private Provider<MlcLlmEngine> bindMlcLlmEngineProvider;
+    private Provider<BackupManager> provideBackupManagerProvider;
 
     private SingletonCImpl(ApplicationContextModule applicationContextModuleParam) {
       this.applicationContextModule = applicationContextModuleParam;
@@ -598,26 +697,52 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
 
     }
 
+    private ChatThreadDao chatThreadDao() {
+      return DatabaseModule_ProvideChatThreadDaoFactory.provideChatThreadDao(provideDatabaseProvider.get());
+    }
+
+    private ChatMessageDao chatMessageDao() {
+      return DatabaseModule_ProvideChatMessageDaoFactory.provideChatMessageDao(provideDatabaseProvider.get());
+    }
+
     private MotorStateDao motorStateDao() {
       return DatabaseModule_ProvideMotorStateDaoFactory.provideMotorStateDao(provideDatabaseProvider.get());
+    }
+
+    private PredictionCacheDao predictionCacheDao() {
+      return DatabaseModule_ProvidePredictionCacheDaoFactory.providePredictionCacheDao(provideDatabaseProvider.get());
     }
 
     private TelemetryDao telemetryDao() {
       return DatabaseModule_ProvideTelemetryDaoFactory.provideTelemetryDao(provideDatabaseProvider.get());
     }
 
+    private BackupLogDao backupLogDao() {
+      return DatabaseModule_ProvideBackupLogDaoFactory.provideBackupLogDao(provideDatabaseProvider.get());
+    }
+
     @SuppressWarnings("unchecked")
     private void initialize(final ApplicationContextModule applicationContextModuleParam) {
       this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<KsetraDatabase>(singletonCImpl, 1));
-      this.motorStateRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 0);
-      this.bindMotorStateRepositoryProvider = DoubleCheck.provider((Provider) motorStateRepositoryImplProvider);
-      this.telemetryRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 2);
-      this.bindTelemetryRepositoryProvider = DoubleCheck.provider((Provider) telemetryRepositoryImplProvider);
-      this.provideSmsManagerProvider = DoubleCheck.provider(new SwitchingProvider<SmsManager>(singletonCImpl, 4));
-      this.defaultSmsCommandSenderProvider = new SwitchingProvider<>(singletonCImpl, 3);
-      this.bindSmsCommandSenderProvider = DoubleCheck.provider((Provider) defaultSmsCommandSenderProvider);
-      this.defaultMlcLlmEngineProvider = new SwitchingProvider<>(singletonCImpl, 5);
+      this.chatRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 0);
+      this.bindChatRepositoryProvider = DoubleCheck.provider((Provider) chatRepositoryImplProvider);
+      this.defaultMlcLlmEngineProvider = new SwitchingProvider<>(singletonCImpl, 2);
       this.bindMlcLlmEngineProvider = DoubleCheck.provider((Provider) defaultMlcLlmEngineProvider);
+      this.provideModelManagerProvider = DoubleCheck.provider(new SwitchingProvider<ModelManager>(singletonCImpl, 3));
+      this.motorStateRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 4);
+      this.bindMotorStateRepositoryProvider = DoubleCheck.provider((Provider) motorStateRepositoryImplProvider);
+      this.predictionRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 5);
+      this.bindPredictionRepositoryProvider = DoubleCheck.provider((Provider) predictionRepositoryImplProvider);
+      this.provideEmbeddingGeneratorProvider = DoubleCheck.provider(new SwitchingProvider<EmbeddingGenerator>(singletonCImpl, 7));
+      this.provideVectorStoreManagerProvider = DoubleCheck.provider(new SwitchingProvider<VectorStoreManager>(singletonCImpl, 8));
+      this.provideRagPipelineProvider = DoubleCheck.provider(new SwitchingProvider<RagPipeline>(singletonCImpl, 6));
+      this.telemetryRepositoryImplProvider = new SwitchingProvider<>(singletonCImpl, 9);
+      this.bindTelemetryRepositoryProvider = DoubleCheck.provider((Provider) telemetryRepositoryImplProvider);
+      this.provideSmsManagerProvider = DoubleCheck.provider(new SwitchingProvider<SmsManager>(singletonCImpl, 11));
+      this.defaultSmsCommandSenderProvider = new SwitchingProvider<>(singletonCImpl, 10);
+      this.bindSmsCommandSenderProvider = DoubleCheck.provider((Provider) defaultSmsCommandSenderProvider);
+      this.provideDriveApiClientProvider = DoubleCheck.provider(new SwitchingProvider<DriveApiClient>(singletonCImpl, 13));
+      this.provideBackupManagerProvider = DoubleCheck.provider(new SwitchingProvider<BackupManager>(singletonCImpl, 12));
     }
 
     @Override
@@ -653,23 +778,47 @@ public final class DaggerKsetraSevakahApp_HiltComponents_SingletonC {
       @Override
       public T get() {
         switch (id) {
-          case 0: // com.ksetrasevakah.core.data.repository.MotorStateRepositoryImpl 
-          return (T) new MotorStateRepositoryImpl(singletonCImpl.motorStateDao());
+          case 0: // com.ksetrasevakah.core.data.repository.ChatRepositoryImpl 
+          return (T) new ChatRepositoryImpl(singletonCImpl.chatThreadDao(), singletonCImpl.chatMessageDao());
 
           case 1: // com.ksetrasevakah.core.database.KsetraDatabase 
           return (T) DatabaseModule_ProvideDatabaseFactory.provideDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 2: // com.ksetrasevakah.core.data.repository.TelemetryRepositoryImpl 
+          case 2: // com.ksetrasevakah.core.ai.DefaultMlcLlmEngine 
+          return (T) new DefaultMlcLlmEngine();
+
+          case 3: // com.ksetrasevakah.core.ai.ModelManager 
+          return (T) AiModule_Companion_ProvideModelManagerFactory.provideModelManager(singletonCImpl.bindMlcLlmEngineProvider.get());
+
+          case 4: // com.ksetrasevakah.core.data.repository.MotorStateRepositoryImpl 
+          return (T) new MotorStateRepositoryImpl(singletonCImpl.motorStateDao());
+
+          case 5: // com.ksetrasevakah.core.data.repository.PredictionRepositoryImpl 
+          return (T) new PredictionRepositoryImpl(singletonCImpl.predictionCacheDao());
+
+          case 6: // com.ksetrasevakah.core.vectorstore.RagPipeline 
+          return (T) VectorStoreModule_ProvideRagPipelineFactory.provideRagPipeline(singletonCImpl.provideEmbeddingGeneratorProvider.get(), singletonCImpl.provideVectorStoreManagerProvider.get());
+
+          case 7: // com.ksetrasevakah.core.vectorstore.EmbeddingGenerator 
+          return (T) VectorStoreModule_ProvideEmbeddingGeneratorFactory.provideEmbeddingGenerator();
+
+          case 8: // com.ksetrasevakah.core.vectorstore.VectorStoreManager 
+          return (T) VectorStoreModule_ProvideVectorStoreManagerFactory.provideVectorStoreManager();
+
+          case 9: // com.ksetrasevakah.core.data.repository.TelemetryRepositoryImpl 
           return (T) new TelemetryRepositoryImpl(singletonCImpl.telemetryDao());
 
-          case 3: // com.ksetrasevakah.core.sms.DefaultSmsCommandSender 
+          case 10: // com.ksetrasevakah.core.sms.DefaultSmsCommandSender 
           return (T) new DefaultSmsCommandSender(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideSmsManagerProvider.get());
 
-          case 4: // android.telephony.SmsManager 
+          case 11: // android.telephony.SmsManager 
           return (T) SmsModule_Companion_ProvideSmsManagerFactory.provideSmsManager(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 5: // com.ksetrasevakah.core.ai.DefaultMlcLlmEngine 
-          return (T) new DefaultMlcLlmEngine();
+          case 12: // com.ksetrasevakah.core.backup.BackupManager 
+          return (T) BackupModule_ProvideBackupManagerFactory.provideBackupManager(singletonCImpl.provideDatabaseProvider.get(), singletonCImpl.backupLogDao(), singletonCImpl.provideDriveApiClientProvider.get());
+
+          case 13: // com.ksetrasevakah.core.backup.DriveApiClient 
+          return (T) BackupModule_ProvideDriveApiClientFactory.provideDriveApiClient();
 
           default: throw new AssertionError(id);
         }

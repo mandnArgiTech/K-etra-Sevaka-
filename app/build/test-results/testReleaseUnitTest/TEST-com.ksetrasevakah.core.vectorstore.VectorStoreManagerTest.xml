@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.core.vectorstore.VectorStoreManagerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:41" hostname="cursor" time="0.005">
+  <properties/>
+  <testcase name="search returns most similar documents first()" classname="com.ksetrasevakah.core.vectorstore.VectorStoreManagerTest" time="0.001"/>
+  <testcase name="addDocument increases store size()" classname="com.ksetrasevakah.core.vectorstore.VectorStoreManagerTest" time="0.0"/>
+  <testcase name="search returns empty list when store is empty()" classname="com.ksetrasevakah.core.vectorstore.VectorStoreManagerTest" time="0.0"/>
+  <testcase name="clear removes all documents()" classname="com.ksetrasevakah.core.vectorstore.VectorStoreManagerTest" time="0.0"/>
+  <testcase name="cosineSimilarity returns 1 for identical vectors()" classname="com.ksetrasevakah.core.vectorstore.VectorStoreManagerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

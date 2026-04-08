@@ -56,7 +56,7 @@ class WorkerOnTimePredictorTest {
         val result = predictor.predict(activities)
         assertFalse(result.insufficientData)
         assertEquals(6, result.predictedHour)
-        assertTrue(result.predictedMinute!! in 8..22)
+        assertEquals(30, result.predictedMinute)
     }
 
     @Test

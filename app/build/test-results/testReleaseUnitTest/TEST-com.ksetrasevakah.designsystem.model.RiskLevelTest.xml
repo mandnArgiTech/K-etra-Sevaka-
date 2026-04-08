@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.designsystem.model.RiskLevelTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:35:55" hostname="cursor" time="0.007">
+<testsuite name="com.ksetrasevakah.designsystem.model.RiskLevelTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:41" hostname="cursor" time="0.005">
   <properties/>
   <testcase name="boundary 25 returns MEDIUM()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.002"/>
-  <testcase name="fromPercentage 10 returns LOW()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.0"/>
-  <testcase name="fromPercentage 80 returns CRITICAL()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.001"/>
-  <testcase name="boundary 24 returns LOW()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.001"/>
-  <testcase name="fromPercentage 60 returns HIGH()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.0"/>
-  <testcase name="fromPercentage 30 returns MEDIUM()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.001"/>
+  <testcase name="fromPercentage 10 returns LOW()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.001"/>
+  <testcase name="fromPercentage 80 returns CRITICAL()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.0"/>
+  <testcase name="boundary 24 returns LOW()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.0"/>
+  <testcase name="fromPercentage 60 returns HIGH()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.001"/>
+  <testcase name="fromPercentage 30 returns MEDIUM()" classname="com.ksetrasevakah.designsystem.model.RiskLevelTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

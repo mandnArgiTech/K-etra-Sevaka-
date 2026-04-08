@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:16" hostname="cursor" time="0.317">
+  <properties/>
+  <testcase name="high consistency yields high confidence()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.111"/>
+  <testcase name="computes standard deviation()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.182"/>
+  <testcase name="returns insufficient data when fewer than 3 activities()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.001"/>
+  <testcase name="predicts average ON hour and minute()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.02"/>
+  <testcase name="skips entries with null onTime()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.WorkerOnTimePredictorTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

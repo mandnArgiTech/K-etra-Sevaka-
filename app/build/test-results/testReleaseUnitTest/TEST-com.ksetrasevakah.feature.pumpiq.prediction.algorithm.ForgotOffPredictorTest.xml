@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.ForgotOffPredictorTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:42" hostname="cursor" time="0.009">
+  <properties/>
+  <testcase name="risk percent stays within 0-100 bounds()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.ForgotOffPredictorTest" time="0.005"/>
+  <testcase name="computes correct forgot count()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.ForgotOffPredictorTest" time="0.001"/>
+  <testcase name="returns insufficient data when fewer than 5 activities()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.ForgotOffPredictorTest" time="0.001"/>
+  <testcase name="computes day-of-week factor()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.ForgotOffPredictorTest" time="0.0"/>
+  <testcase name="returns zero risk when no forgot-off events()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.ForgotOffPredictorTest" time="0.0"/>
+  <testcase name="assigns higher risk for higher forgot rate()" classname="com.ksetrasevakah.feature.pumpiq.prediction.algorithm.ForgotOffPredictorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

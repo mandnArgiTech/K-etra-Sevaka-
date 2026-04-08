@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.core.ai.ModelManagerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:34:40" hostname="cursor" time="0.63">
+<testsuite name="com.ksetrasevakah.core.ai.ModelManagerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:20" hostname="cursor" time="0.643">
   <properties/>
-  <testcase name="loadOrchestratorModel calls engine loadModel()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.427"/>
-  <testcase name="loadIngestionModel calls engine loadModel()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.05"/>
-  <testcase name="loadIngestionModel skips if already READY()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.046"/>
+  <testcase name="loadOrchestratorModel calls engine loadModel()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.429"/>
+  <testcase name="loadIngestionModel calls engine loadModel()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.059"/>
+  <testcase name="loadIngestionModel skips if already READY()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.049"/>
   <testcase name="releaseOrchestratorIfIdle cancels previous idle job on new load()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.057"/>
-  <testcase name="releaseOrchestratorIfIdle unloads after timeout()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.047"/>
+  <testcase name="releaseOrchestratorIfIdle unloads after timeout()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.045"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

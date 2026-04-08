@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.pumpiq.prediction.ForgotOffWatchdogTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:23" hostname="cursor" time="0.127">
+  <properties/>
+  <testcase name="returns alert at 45 minute threshold()" classname="com.ksetrasevakah.feature.pumpiq.prediction.ForgotOffWatchdogTest" time="0.073"/>
+  <testcase name="returns null when no active session()" classname="com.ksetrasevakah.feature.pumpiq.prediction.ForgotOffWatchdogTest" time="0.006"/>
+  <testcase name="returns alert at 105 minute threshold()" classname="com.ksetrasevakah.feature.pumpiq.prediction.ForgotOffWatchdogTest" time="0.01"/>
+  <testcase name="returns null when session is within avg time()" classname="com.ksetrasevakah.feature.pumpiq.prediction.ForgotOffWatchdogTest" time="0.024"/>
+  <testcase name="returns alert at 75 minute threshold()" classname="com.ksetrasevakah.feature.pumpiq.prediction.ForgotOffWatchdogTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

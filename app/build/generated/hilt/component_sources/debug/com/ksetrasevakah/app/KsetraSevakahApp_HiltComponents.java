@@ -1,13 +1,20 @@
 package com.ksetrasevakah.app;
 
+import androidx.hilt.work.HiltWrapper_WorkerFactoryModule;
 import com.ksetrasevakah.core.ai.IngestionService_GeneratedInjector;
 import com.ksetrasevakah.core.ai.di.AiModule;
+import com.ksetrasevakah.core.backup.BackupWorker_HiltModule;
+import com.ksetrasevakah.core.backup.di.BackupModule;
 import com.ksetrasevakah.core.database.di.DatabaseModule;
 import com.ksetrasevakah.core.di.AppModule;
 import com.ksetrasevakah.core.di.RepositoryModule;
+import com.ksetrasevakah.core.notification.di.NotificationModule;
 import com.ksetrasevakah.core.sms.di.SmsModule;
+import com.ksetrasevakah.core.vectorstore.di.VectorStoreModule;
 import com.ksetrasevakah.feature.hub.HubViewModel_HiltModules;
+import com.ksetrasevakah.feature.pumpiq.chat.ChatViewModel_HiltModules;
 import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel_HiltModules;
+import com.ksetrasevakah.feature.settings.SettingsViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -135,12 +142,17 @@ public final class KsetraSevakahApp_HiltComponents {
           AiModule.class,
           AppModule.class,
           ApplicationContextModule.class,
+          BackupModule.class,
+          BackupWorker_HiltModule.class,
           DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
+          HiltWrapper_WorkerFactoryModule.class,
           ActivityRetainedCBuilderModule.class,
           ServiceCBuilderModule.class,
+          NotificationModule.class,
           RepositoryModule.class,
-          SmsModule.class
+          SmsModule.class,
+          VectorStoreModule.class
       }
   )
   @Singleton
@@ -164,12 +176,14 @@ public final class KsetraSevakahApp_HiltComponents {
 
   @Subcomponent(
       modules = {
+          ChatViewModel_HiltModules.KeyModule.class,
           DashboardViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           HubViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
-          ViewModelCBuilderModule.class
+          ViewModelCBuilderModule.class,
+          SettingsViewModel_HiltModules.KeyModule.class
       }
   )
   @ActivityRetainedScoped
@@ -205,9 +219,11 @@ public final class KsetraSevakahApp_HiltComponents {
 
   @Subcomponent(
       modules = {
+          ChatViewModel_HiltModules.BindsModule.class,
           DashboardViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
-          HubViewModel_HiltModules.BindsModule.class
+          HubViewModel_HiltModules.BindsModule.class,
+          SettingsViewModel_HiltModules.BindsModule.class
       }
   )
   @ViewModelScoped

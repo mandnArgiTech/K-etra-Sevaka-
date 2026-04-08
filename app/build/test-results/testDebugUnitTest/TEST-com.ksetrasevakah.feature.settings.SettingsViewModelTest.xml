@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.settings.SettingsViewModelTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:24" hostname="cursor" time="0.065">
+  <properties/>
+  <testcase name="panel number matches constant()" classname="com.ksetrasevakah.feature.settings.SettingsViewModelTest" time="0.058"/>
+  <testcase name="toggle watchdog updates state()" classname="com.ksetrasevakah.feature.settings.SettingsViewModelTest" time="0.003"/>
+  <testcase name="initial state shows motor OFF after loading()" classname="com.ksetrasevakah.feature.settings.SettingsViewModelTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

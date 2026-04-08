@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:34:42" hostname="cursor" time="0.07">
+<testsuite name="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:23" hostname="cursor" time="0.076">
   <properties/>
-  <testcase name="ALERT creates fault and transitions to OFF()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.046"/>
-  <testcase name="MOTOR OFF confirmation transitions to OFF()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.008"/>
-  <testcase name="MOTOR ON confirmation transitions to ON()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.006"/>
-  <testcase name="ALERT clears pending command()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.007"/>
-  <testcase name="unknown SMS body returns error()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.002"/>
+  <testcase name="ALERT creates fault and transitions to OFF()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.055"/>
+  <testcase name="MOTOR OFF confirmation transitions to OFF()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.006"/>
+  <testcase name="MOTOR ON confirmation transitions to ON()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.005"/>
+  <testcase name="ALERT clears pending command()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.005"/>
+  <testcase name="unknown SMS body returns error()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.003"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

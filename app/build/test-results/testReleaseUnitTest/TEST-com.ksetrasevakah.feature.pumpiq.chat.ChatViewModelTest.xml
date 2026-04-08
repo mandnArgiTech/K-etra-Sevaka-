@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.pumpiq.chat.ChatViewModelTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:41" hostname="cursor" time="0.19">
+  <properties/>
+  <testcase name="threads are loaded on init()" classname="com.ksetrasevakah.feature.pumpiq.chat.ChatViewModelTest" time="0.133"/>
+  <testcase name="error from threads use case sets error state()" classname="com.ksetrasevakah.feature.pumpiq.chat.ChatViewModelTest" time="0.004"/>
+  <testcase name="initial state has empty messages and loading false after threads load()" classname="com.ksetrasevakah.feature.pumpiq.chat.ChatViewModelTest" time="0.004"/>
+  <testcase name="select thread updates currentThreadId and observes messages()" classname="com.ksetrasevakah.feature.pumpiq.chat.ChatViewModelTest" time="0.011"/>
+  <testcase name="send message creates thread when no current thread()" classname="com.ksetrasevakah.feature.pumpiq.chat.ChatViewModelTest" time="0.018"/>
+  <testcase name="navigate back emits navigation event()" classname="com.ksetrasevakah.feature.pumpiq.chat.ChatViewModelTest" time="0.017"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

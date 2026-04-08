@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.pumpiq.chat.prompt.SystemPromptBuilderTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:52:41" hostname="cursor" time="0.128">
+  <properties/>
+  <testcase name="build handles prediction error gracefully()" classname="com.ksetrasevakah.feature.pumpiq.chat.prompt.SystemPromptBuilderTest" time="0.112"/>
+  <testcase name="build includes PumpIQ identity()" classname="com.ksetrasevakah.feature.pumpiq.chat.prompt.SystemPromptBuilderTest" time="0.005"/>
+  <testcase name="build includes farmer-friendly language instruction()" classname="com.ksetrasevakah.feature.pumpiq.chat.prompt.SystemPromptBuilderTest" time="0.005"/>
+  <testcase name="build includes prediction info when available()" classname="com.ksetrasevakah.feature.pumpiq.chat.prompt.SystemPromptBuilderTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
