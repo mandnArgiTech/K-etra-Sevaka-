@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:19:36" hostname="cursor" time="2.673">
+<testsuite name="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:34:41" hostname="cursor" time="0.241">
   <properties/>
-  <testcase name="observeMotorState emits Error for invalid state string()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="2.379"/>
-  <testcase name="updateMotorState returns Success on happy path()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.172"/>
-  <testcase name="clearPendingCommand returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.013"/>
-  <testcase name="observeMotorState emits Success with mapped MotorState()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.007"/>
-  <testcase name="getSessionDuration returns 0 when no active session()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.056"/>
+  <testcase name="observeMotorState emits Error for invalid state string()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.134"/>
+  <testcase name="updateMotorState returns Success on happy path()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.009"/>
+  <testcase name="clearPendingCommand returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.009"/>
+  <testcase name="observeMotorState emits Success with mapped MotorState()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.005"/>
+  <testcase name="getSessionDuration returns 0 when no active session()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.043"/>
   <testcase name="observeMotorState emits Success OFF when entity is null()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.006"/>
-  <testcase name="getSessionDuration returns duration when session is active()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.006"/>
+  <testcase name="getSessionDuration returns duration when session is active()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.005"/>
   <testcase name="setPendingCommand returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.006"/>
   <testcase name="clearPendingCommand returns Success on happy path()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.005"/>
   <testcase name="updateMotorState returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.005"/>
-  <testcase name="getSessionDuration returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.004"/>
+  <testcase name="getSessionDuration returns Error when DAO throws()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.005"/>
   <testcase name="setPendingCommand returns Success on happy path()" classname="com.ksetrasevakah.core.data.repository.MotorStateRepositoryImplTest" time="0.005"/>
   <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/home/ubuntu/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.14.17/e3c251a39dc90badaf71c83427ba46840f219d8d/byte-buddy-agent-1.14.17.jar)
-WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
-WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
-WARNING: Dynamic loading of agents will be disallowed by default in a future release
-]]></system-err>
+  <system-err><![CDATA[]]></system-err>
 </testsuite>

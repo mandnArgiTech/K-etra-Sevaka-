@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.core.ai.ModelManagerTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:35:53" hostname="cursor" time="0.731">
+  <properties/>
+  <testcase name="loadOrchestratorModel calls engine loadModel()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.489"/>
+  <testcase name="loadIngestionModel calls engine loadModel()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.064"/>
+  <testcase name="loadIngestionModel skips if already READY()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.062"/>
+  <testcase name="releaseOrchestratorIfIdle cancels previous idle job on new load()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.064"/>
+  <testcase name="releaseOrchestratorIfIdle unloads after timeout()" classname="com.ksetrasevakah.core.ai.ModelManagerTest" time="0.049"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

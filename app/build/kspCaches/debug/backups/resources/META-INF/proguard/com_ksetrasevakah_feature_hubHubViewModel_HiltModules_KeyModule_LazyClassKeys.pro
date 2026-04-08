@@ -1,0 +1,2 @@
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.hub.HubViewModel
+-keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.hub.HubViewModel

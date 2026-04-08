@@ -1,9 +1,13 @@
 package com.ksetrasevakah.app;
 
+import com.ksetrasevakah.core.ai.IngestionService_GeneratedInjector;
+import com.ksetrasevakah.core.ai.di.AiModule;
 import com.ksetrasevakah.core.database.di.DatabaseModule;
 import com.ksetrasevakah.core.di.AppModule;
 import com.ksetrasevakah.core.di.RepositoryModule;
 import com.ksetrasevakah.core.sms.di.SmsModule;
+import com.ksetrasevakah.feature.hub.HubViewModel_HiltModules;
+import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -128,6 +132,7 @@ public final class KsetraSevakahApp_HiltComponents {
 
   @Component(
       modules = {
+          AiModule.class,
           AppModule.class,
           ApplicationContextModule.class,
           DatabaseModule.class,
@@ -149,7 +154,8 @@ public final class KsetraSevakahApp_HiltComponents {
 
   @Subcomponent
   @ServiceScoped
-  public abstract static class ServiceC implements ServiceComponent,
+  public abstract static class ServiceC implements IngestionService_GeneratedInjector,
+      ServiceComponent,
       GeneratedComponent {
     @Subcomponent.Builder
     abstract interface Builder extends ServiceComponentBuilder {
@@ -158,8 +164,10 @@ public final class KsetraSevakahApp_HiltComponents {
 
   @Subcomponent(
       modules = {
+          DashboardViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
+          HubViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class
       }
@@ -196,7 +204,11 @@ public final class KsetraSevakahApp_HiltComponents {
   }
 
   @Subcomponent(
-      modules = HiltWrapper_HiltViewModelFactory_ViewModelModule.class
+      modules = {
+          DashboardViewModel_HiltModules.BindsModule.class,
+          HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
+          HubViewModel_HiltModules.BindsModule.class
+      }
   )
   @ViewModelScoped
   public abstract static class ViewModelC implements ViewModelComponent,
