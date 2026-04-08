@@ -1,5 +1,0 @@
--keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel
--keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardViewModel
--keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel
--keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.suraksha.camera.CameraMatrixViewModel
--keep,allowobfuscation,allowshrinking class com.ksetrasevakah.feature.hub.HubViewModel
