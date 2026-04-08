@@ -10,6 +10,8 @@ object NotificationChannels {
     const val CHANNEL_PREDICTIONS = "predictions"
     const val CHANNEL_BACKUP = "backup"
     const val CHANNEL_WATCHDOG = "watchdog"
+    const val CHANNEL_SECURITY = "security_alerts"
+    const val CHANNEL_CRITICAL = "critical_alarm"
 
     fun createAll(context: Context) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -42,6 +44,20 @@ object NotificationChannels {
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "Forgot-off detection and runtime limit alerts"
+            },
+            NotificationChannel(
+                CHANNEL_SECURITY,
+                "Security Alerts",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Suraksha security event notifications"
+            },
+            NotificationChannel(
+                CHANNEL_CRITICAL,
+                "Critical Alarm",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Critical security alarm with full-screen alert"
             }
         )
 

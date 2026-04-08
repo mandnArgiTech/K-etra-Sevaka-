@@ -30,4 +30,7 @@ object DatabaseModule {
     @Provides fun provideChatThreadDao(db: KsetraDatabase): ChatThreadDao = db.chatThreadDao()
     @Provides fun provideChatMessageDao(db: KsetraDatabase): ChatMessageDao = db.chatMessageDao()
     @Provides fun provideBackupLogDao(db: KsetraDatabase): BackupLogDao = db.backupLogDao()
+    @Provides fun provideSecurityEventDao(db: KsetraDatabase): SecurityEventDao = db.securityEventDao()
+    @Provides fun provideCameraConfigDao(db: KsetraDatabase): CameraConfigDao = db.cameraConfigDao()
+    @Provides fun provideSecurityBriefingDao(db: KsetraDatabase): SecurityBriefingDao = db.securityBriefingDao()
 }

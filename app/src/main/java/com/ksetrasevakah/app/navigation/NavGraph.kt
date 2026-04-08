@@ -10,6 +10,8 @@ import androidx.navigation.navArgument
 import com.ksetrasevakah.designsystem.theme.KsetraTheme
 import com.ksetrasevakah.feature.hub.HubScreen
 import com.ksetrasevakah.feature.pumpiq.dashboard.DashboardScreen
+import com.ksetrasevakah.feature.suraksha.camera.CameraMatrixScreen
+import com.ksetrasevakah.feature.suraksha.dashboard.SurakshaDashboardScreen
 
 @Composable
 fun NavGraph(navController: NavHostController = rememberNavController()) {
@@ -22,6 +24,9 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
                 HubScreen(
                     onNavigateToDashboard = {
                         navController.navigate(Screen.Dashboard.route)
+                    },
+                    onNavigateToSuraksha = {
+                        navController.navigate(Screen.SurakshaDashboard.route)
                     },
                     onNavigateToSettings = {
                         navController.navigate(Screen.Settings.route)
@@ -53,6 +58,21 @@ fun NavGraph(navController: NavHostController = rememberNavController()) {
 
             composable(Screen.Settings.route) {
                 // Settings screen placeholder — will be implemented in E11
+            }
+
+            composable(Screen.SurakshaDashboard.route) {
+                SurakshaDashboardScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToCameraMatrix = {
+                        navController.navigate(Screen.CameraMatrix.route)
+                    }
+                )
+            }
+
+            composable(Screen.CameraMatrix.route) {
+                CameraMatrixScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
         }
     }

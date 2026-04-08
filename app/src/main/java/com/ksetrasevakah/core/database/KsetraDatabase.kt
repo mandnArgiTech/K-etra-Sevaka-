@@ -17,8 +17,11 @@ import com.ksetrasevakah.core.database.entity.*
         ChatThreadEntity::class,
         ChatMessageEntity::class,
         BackupLogEntity::class,
+        SecurityEventEntity::class,
+        CameraConfigEntity::class,
+        SecurityBriefingEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -31,4 +34,7 @@ abstract class KsetraDatabase : RoomDatabase() {
     abstract fun chatThreadDao(): ChatThreadDao
     abstract fun chatMessageDao(): ChatMessageDao
     abstract fun backupLogDao(): BackupLogDao
+    abstract fun securityEventDao(): SecurityEventDao
+    abstract fun cameraConfigDao(): CameraConfigDao
+    abstract fun securityBriefingDao(): SecurityBriefingDao
 }

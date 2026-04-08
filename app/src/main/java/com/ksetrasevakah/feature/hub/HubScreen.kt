@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,15 +44,18 @@ import com.ksetrasevakah.designsystem.theme.KsetraTextDisabled
 import com.ksetrasevakah.designsystem.theme.KsetraTextPrimary
 import com.ksetrasevakah.designsystem.theme.KsetraTextSecondary
 import com.ksetrasevakah.designsystem.theme.KsetraTheme
+import com.ksetrasevakah.designsystem.theme.SurakshaShieldBlue
 
 @Composable
 fun HubScreen(
     onNavigateToDashboard: () -> Unit,
+    onNavigateToSuraksha: () -> Unit,
     onNavigateToSettings: () -> Unit,
     viewModel: HubViewModel = hiltViewModel()
 ) {
     HubContent(
         onNavigateToDashboard = onNavigateToDashboard,
+        onNavigateToSuraksha = onNavigateToSuraksha,
         onNavigateToSettings = onNavigateToSettings
     )
 }
@@ -59,6 +63,7 @@ fun HubScreen(
 @Composable
 private fun HubContent(
     onNavigateToDashboard: () -> Unit,
+    onNavigateToSuraksha: () -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
     Box(
@@ -111,10 +116,11 @@ private fun HubContent(
             Spacer(modifier = Modifier.height(KsetraSpacing.md))
 
             ModuleCard(
-                title = "CropDoctor",
-                description = "Crop disease detection & treatment advice",
-                isActive = false,
-                onClick = {}
+                title = "Suraksha",
+                description = "Farm security monitoring & threat detection",
+                isActive = true,
+                accentColor = SurakshaShieldBlue,
+                onClick = onNavigateToSuraksha
             )
 
             Spacer(modifier = Modifier.height(KsetraSpacing.md))
@@ -156,6 +162,7 @@ private fun ModuleCard(
     title: String,
     description: String,
     isActive: Boolean,
+    accentColor: Color = KsetraAccentGreen,
     onClick: () -> Unit
 ) {
     KsetraCard(
@@ -193,7 +200,7 @@ private fun ModuleCard(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "Open $title",
-                    tint = KsetraAccentGreen,
+                    tint = accentColor,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -267,6 +274,7 @@ private fun HubScreenPreview() {
     KsetraTheme {
         HubContent(
             onNavigateToDashboard = {},
+            onNavigateToSuraksha = {},
             onNavigateToSettings = {}
         )
     }
