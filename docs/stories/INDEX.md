@@ -82,3 +82,53 @@
 **Size guide:** S = 1-2h, M = 2-4h, L = 4-8h
 **Total stories:** 27
 **Estimated implementation:** ~100-120 hours
+
+---
+
+# MODULE 2: SURAKṢĀ — Security Camera Intelligence
+
+> Implement AFTER PumpIQ (E01-E11) is complete. Surakṣā reuses the shared core layer.
+
+## Epic 12: Surakṣā Data Layer
+| Story | Title | Est. |
+|-------|-------|------|
+| [E12-S01](./E12-S01-suraksha-data-layer.md) | Database entities, DAOs, repositories for security events & cameras | L |
+
+## Epic 13: Notification Engine & Threat Router
+| Story | Title | Est. |
+|-------|-------|------|
+| [E13-S01](./E13-S01-notification-listener.md) | NotificationListenerService for Tapo camera interception | L |
+| [E13-S02](./E13-S02-threat-router.md) | 0.5B Threat Router: classification, routing, notification dismissal | L |
+| [E13-S03](./E13-S03-critical-alarm.md) | Critical alarm system: DND override, sound, vibration, overlay state | M |
+
+## Epic 14: Surakṣā Dashboard UI
+| Story | Title | Est. |
+|-------|-------|------|
+| [E14-S01](./E14-S01-suraksha-dashboard.md) | Dashboard: Threat Ledger, AI Briefing, Heatmap, Summary Cards | L |
+| [E14-S02](./E14-S02-critical-overlay.md) | Critical threat full-screen red alert overlay | M |
+
+## Epic 15: Camera Management
+| Story | Title | Est. |
+|-------|-------|------|
+| [E15-S01](./E15-S01-camera-matrix.md) | Camera Configuration Matrix screen (ACTIVE/SILENT/DROP modes) | M |
+
+## Epic 16: Cross-Module Intelligence
+| Story | Title | Est. |
+|-------|-------|------|
+| [E16-S01](./E16-S01-cross-module-chat.md) | Cross-module AI chat: PumpIQ + Surakṣā forensic correlation | L |
+
+## Epic 17: Surakṣā Navigation & Hub Integration
+| Story | Title | Est. |
+|-------|-------|------|
+| [E17-S01](./E17-S01-suraksha-navigation.md) | NavGraph routes, Hub activation, badge, navigation wiring | M |
+
+## Epic 18: Surakṣā E2E Testing
+| Story | Title | Est. |
+|-------|-------|------|
+| [E18-S01](./E18-S01-suraksha-e2e.md) | End-to-end integration test suite (9 flow tests) | L |
+
+---
+
+**Surakṣā stories:** 10 stories across 7 epics  
+**Estimated implementation:** ~50-60 hours  
+**Combined total (PumpIQ + Surakṣā):** 37 stories, ~160-180 hours

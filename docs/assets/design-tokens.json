@@ -97,5 +97,32 @@
     "maxChatContextMessages": 10,
     "vectorSearchTopK": 5,
     "backupScheduleHour": 2
+  },
+  "suraksha": {
+    "colors": {
+      "shieldBlue": "#3B82F6",
+      "shieldBlueDim": "#1E3A5F",
+      "shieldBlueGlow": "rgba(59,130,246,0.15)",
+      "alertCriticalBg": "#991B1B",
+      "alertCriticalBorder": "#DC2626",
+      "alertCriticalPulse": "#FCA5A5",
+      "personGreen": "#22C55E",
+      "tamperingRed": "#EF4444",
+      "nightPurple": "#7C3AED",
+      "dayAmber": "#F59E0B",
+      "silentGray": "#6B7280",
+      "dropDark": "#374151"
+    },
+    "threatLedgerColors": {
+      "LOW": "#4ADE80",
+      "MEDIUM": "#F59E0B",
+      "HIGH": "#EF4444",
+      "CRITICAL": "#DC2626"
+    },
+    "cameraModeColors": {
+      "ACTIVE": "#3B82F6",
+      "SILENT": "#6B7280",
+      "DROP": "#374151"
+    }
   }
 }

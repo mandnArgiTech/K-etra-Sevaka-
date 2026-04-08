@@ -53,6 +53,12 @@ com.ksetrasevakah/
 │   │   ├── dashboard/      # Dashboard screen + motor control
 │   │   ├── prediction/     # Prediction engine + cards
 │   │   └── chat/           # AI Analyst chat interface
+│   ├── suraksha/
+│   │   ├── dashboard/      # Surakṣā dashboard + threat ledger
+│   │   ├── camera/         # Camera Configuration Matrix
+│   │   ├── domain/         # SecurityEvent, CameraConfig, UseCases
+│   │   ├── prediction/     # ThreatRouter, CrossModuleCorrelator
+│   │   └── di/             # Surakṣā Hilt module
 │   └── settings/           # Settings & backup screen
 └── designsystem/           # Theme, colors, typography, components
 ```
@@ -81,4 +87,14 @@ const val ORCHESTRATOR_MODEL_ID = "Qwen2.5-3B-Instruct-q4f16_1-MLC"
 const val DB_NAME = "ksetra_sevakah_db"
 const val VECTOR_DB_DIR = "vector_store"
 const val BACKUP_FOLDER_NAME = "KsetraSevakah_Backup"
+
+// Surakṣā Module Constants
+const val TAPO_PACKAGE_NAME = "com.tplink.iot"
+const val NOTIFICATION_WHEN_MAX_AGE_MS = 300_000L   // 5 min validity
+const val ACTIVITY_SPIKE_WINDOW_MS = 300_000L        // 5 min same camera
+const val COORDINATED_WINDOW_MS = 120_000L           // 2 min multi-camera
+const val ACTIVITY_SPIKE_THRESHOLD = 3
+const val CRITICAL_ALARM_DURATION_MS = 15_000L
+const val CRITICAL_OVERLAY_TIMEOUT_MS = 60_000L
+const val CROSS_MODULE_CORRELATION_WINDOW_MS = 300_000L
 ```

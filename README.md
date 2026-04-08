@@ -17,6 +17,18 @@ Intelligent manager for a **Taro Smart Panel** that communicates via SMS telemet
 4. **Structured Visualizations** — Phase currents, grid reliability, fault distribution
 5. **Persistent Storage** — SQLite + Local Vector Store (FAISS) + Google Drive backup
 
+## Module 2: Surakṣā (Security Camera Intelligence)
+AI-powered security for 11→30+ TP-Link Tapo cameras.
+
+### Core Capabilities
+1. **NotificationListenerService** — Intercepts Tapo app (`com.tplink.iot`) notifications
+2. **Notification.when Extraction** — Uses camera's origin timestamp for exact NVR video scrubbing
+3. **0.5B Threat Router** — Classifies LOW/MEDIUM/HIGH/CRITICAL, dismisses noise, escalates threats
+4. **Camera Configuration Matrix** — Per-camera ACTIVE/SILENT/DROP modes, auto-discovery
+5. **Critical Alarm System** — DND override, loud alarm, full-screen red overlay for tampering
+6. **Cross-Module Forensic AI** — 3B model correlates security events with PumpIQ telemetry
+7. **Security Briefings** — AI-generated nightly summaries with cross-module intelligence
+
 ## Repository Structure
 ```
 ├── docs/
