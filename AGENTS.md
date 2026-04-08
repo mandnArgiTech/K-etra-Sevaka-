@@ -4,11 +4,11 @@
 
 ### Repository overview
 
-This is a **design/planning repository** for an Android-native, on-device AI platform (Kotlin + Jetpack Compose). No Android application source code exists yet — the repo contains architecture docs, user stories, test plans, and a **React JSX UI prototype**.
+Android-native, on-device AI platform for agricultural motor management and security camera intelligence. Two modules: **PumpIQ** (SMS-based motor control + AI predictions) and **Suraksha** (Tapo camera notification interception + threat classification). Architecture docs in `docs/`, user stories in `docs/stories/`, test plans in `docs/test-plan/`.
 
-### Runnable artifact
+### Two runnable artifacts
 
-The only runnable code is the interactive prototype at `prototype/`. It is a Vite + React app.
+**1. React prototype** (`prototype/`) — interactive UI mockup:
 
 | Action | Command | Working directory |
 |--------|---------|-------------------|
@@ -17,12 +17,20 @@ The only runnable code is the interactive prototype at `prototype/`. It is a Vit
 | Lint | `npx eslint .` | `prototype/` |
 | Build | `npx vite build` | `prototype/` |
 
-The dev server serves at `http://localhost:5173`.
+**2. Android app** (`app/`) — Kotlin + Jetpack Compose, built with Gradle:
 
-### Lint caveat
+| Action | Command | Working directory |
+|--------|---------|-------------------|
+| Build debug APK | `./gradlew assembleDebug` | `/workspace` |
+| Unit tests (217) | `./gradlew testDebugUnitTest` | `/workspace` |
+| All tests | `./gradlew test` | `/workspace` |
 
-ESLint reports 1 pre-existing warning (`react-hooks/exhaustive-deps` in `ksetra-sevakah.jsx`). This is in the original prototype code and is expected.
+Requires `ANDROID_HOME=/opt/android-sdk` (SDK 35 + build-tools 35.0.0). JDK 17+ required (JDK 21 available by default).
 
-### No external services required
+### Key caveats
 
-The prototype is fully self-contained (static mock data, no backend, no database). No Docker, no API keys, no secrets needed.
+- No Android emulator — instrumented tests (`connectedAndroidTest`) cannot run in Cloud. Unit tests are comprehensive (217 tests).
+- MLC-LLM engine is stubbed (`DefaultMlcLlmEngine`) since the real SDK requires a physical Snapdragon device.
+- Google Drive API client is stubbed (`DriveApiClient` interface) — requires OAuth2 credentials for real usage.
+- ESLint on prototype has 1 pre-existing warning (`react-hooks/exhaustive-deps`).
+- No external services, Docker, API keys, or secrets required for building and unit testing.
