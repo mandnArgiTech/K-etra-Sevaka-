@@ -1,0 +1,84 @@
+# Kṣetra Sevakaḥ — Cursor Rules
+
+## Project Context
+This is an Android Kotlin application using Jetpack Compose, targeting API 28+ (min) and API 35 (compile).
+The app runs entirely on-device AI inference via MLC-LLM. No cloud AI APIs.
+
+## Language & Framework
+- **Language:** Kotlin 2.0+ with coroutines & Flow
+- **UI:** Jetpack Compose with Material Design 3
+- **DI:** Hilt (Dagger)
+- **Database:** Room (SQLite)
+- **Networking:** None for AI. OkHttp only for Google Drive API.
+- **Testing:** JUnit5, Turbine (Flow testing), Mockk, Compose UI testing, Robolectric
+
+## Architecture
+- **Pattern:** MVI (Model-View-Intent) with unidirectional data flow
+- **Modules:** Feature-based modular structure under `:feature:*`
+- **Layers per feature:** `ui/` → `domain/` → `data/`
+
+## Code Conventions
+- Every public class/function has KDoc
+- ViewModels expose `StateFlow<UiState>` and accept `sealed interface UiEvent`
+- Repository interfaces live in `domain/`, implementations in `data/`
+- Use `Result<T>` wrapper for all repository return types
+- SMS operations must ONLY target number `070936 52065`
+- All database operations use Room DAOs — never raw SQL in app code
+- Composables: stateless where possible, hoisted state to ViewModel
+
+## File Naming
+- ViewModels: `*ViewModel.kt`
+- Screens: `*Screen.kt`
+- DAOs: `*Dao.kt`
+- Entities: `*Entity.kt`
+- Repositories: `*Repository.kt` (interface), `*RepositoryImpl.kt` (impl)
+- UseCases: `*UseCase.kt`
+- Workers: `*Worker.kt`
+
+## Package Structure
+```
+com.ksetrasevakah/
+├── app/                    # Application class, MainActivity, NavGraph
+├── core/
+│   ├── database/           # Room DB, DAOs, Entities, Migrations
+│   ├── sms/                # SmsManager wrapper, BroadcastReceiver
+│   ├── ai/                 # MLC-LLM engine wrapper
+│   ├── vectorstore/        # FAISS/Chroma local vector store
+│   ├── backup/             # Google Drive integration
+│   ├── di/                 # Hilt modules
+│   └── common/             # Result wrapper, extensions, constants
+├── feature/
+│   ├── hub/                # Main menu / module launcher
+│   ├── pumpiq/
+│   │   ├── dashboard/      # Dashboard screen + motor control
+│   │   ├── prediction/     # Prediction engine + cards
+│   │   └── chat/           # AI Analyst chat interface
+│   └── settings/           # Settings & backup screen
+└── designsystem/           # Theme, colors, typography, components
+```
+
+## Testing Rules
+- Every ViewModel must have unit tests
+- Every Repository must have unit tests with mocked DAOs
+- Every DAO must have instrumented tests with in-memory Room DB
+- Compose screens must have UI tests for key interactions
+- SMS sending must be tested with mocked SmsManager
+- Target: 95% line coverage on `core/` and `domain/` layers
+- Target: 85% line coverage on `ui/` layer
+
+## Story Implementation Flow
+1. Read the story markdown file completely
+2. Implement all files listed in "Files to Create/Modify"
+3. Write tests as specified in "Test Requirements"
+4. Verify all acceptance criteria pass
+5. Move to next story only when current is green
+
+## Key Constants
+```kotlin
+const val TARO_PANEL_NUMBER = "070936 52065"
+const val INGESTION_MODEL_ID = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC"
+const val ORCHESTRATOR_MODEL_ID = "Qwen2.5-3B-Instruct-q4f16_1-MLC"
+const val DB_NAME = "ksetra_sevakah_db"
+const val VECTOR_DB_DIR = "vector_store"
+const val BACKUP_FOLDER_NAME = "KsetraSevakah_Backup"
+```

@@ -1,0 +1,101 @@
+{
+  "colors": {
+    "primary": {
+      "background": "#0F1A12",
+      "surface": "#142219",
+      "card": "#1A2B1E",
+      "cardHover": "#223826",
+      "border": "#2D4A35",
+      "borderLight": "#3A5C44"
+    },
+    "accent": {
+      "green": "#4ADE80",
+      "greenDim": "#22623D",
+      "greenGlow": "rgba(74,222,128,0.15)"
+    },
+    "semantic": {
+      "amber": "#F59E0B",
+      "amberDim": "#78500A",
+      "red": "#EF4444",
+      "redDim": "#7F1D1D",
+      "purple": "#A78BFA",
+      "purpleDim": "#4C1D95",
+      "blue": "#60A5FA",
+      "blueDim": "#1E3A5F"
+    },
+    "text": {
+      "primary": "#F0FFF4",
+      "secondary": "#A3C4AE",
+      "disabled": "#5C7A65"
+    },
+    "motorState": {
+      "off": { "bg": "#22623D", "border": "#4ADE80", "text": "#F0FFF4" },
+      "pendingStart": { "bg": "#78500A", "border": "#F59E0B", "text": "#F59E0B" },
+      "on": { "bg": "#7F1D1D", "border": "#EF4444", "text": "#F0FFF4" },
+      "pendingStop": { "bg": "#78500A", "border": "#F59E0B", "text": "#F59E0B" }
+    },
+    "riskLevels": {
+      "low": { "bg": "#4ADE8020", "text": "#4ADE80", "border": "#4ADE8044" },
+      "medium": { "bg": "#F59E0B20", "text": "#F59E0B", "border": "#F59E0B44" },
+      "high": { "bg": "#EF444420", "text": "#EF4444", "border": "#EF444444" },
+      "critical": { "bg": "#EF444430", "text": "#FF6B6B", "border": "#EF444466" }
+    },
+    "phaseColors": {
+      "R": "#EF4444",
+      "Y": "#F59E0B",
+      "B": "#60A5FA"
+    }
+  },
+  "typography": {
+    "displayFont": "Playfair Display",
+    "bodyFont": "DM Sans",
+    "monoFont": "JetBrains Mono",
+    "sizes": {
+      "h1": 26,
+      "h2": 20,
+      "h3": 18,
+      "body": 14,
+      "bodySmall": 13,
+      "caption": 12,
+      "label": 11,
+      "micro": 10,
+      "nano": 9
+    },
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "extrabold": 800
+    }
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 20,
+    "xxl": 24,
+    "xxxl": 32,
+    "screenPadding": 20,
+    "cardPadding": 16,
+    "cardRadius": 16,
+    "buttonRadius": 14,
+    "chipRadius": 20,
+    "badgeRadius": 20
+  },
+  "constants": {
+    "taroPanelNumber": "070936 52065",
+    "smsTimeoutSeconds": 30,
+    "predictionWindowDays": 14,
+    "forgotOffThresholdMinutes": 45,
+    "watchdogAlertMinutes": [45, 75, 105],
+    "modelIds": {
+      "ingestion": "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
+      "orchestrator": "Qwen2.5-3B-Instruct-q4f16_1-MLC"
+    },
+    "maxChatContextMessages": 10,
+    "vectorSearchTopK": 5,
+    "backupScheduleHour": 2
+  }
+}
