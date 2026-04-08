@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.core.sms.SmsParserTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:19:39" hostname="cursor" time="0.677">
+  <properties/>
+  <testcase name="extractFromIntent concatenates multipart SMS from same sender()" classname="com.ksetrasevakah.core.sms.SmsParserTest" time="0.616"/>
+  <testcase name="extractFromIntent parses single SMS()" classname="com.ksetrasevakah.core.sms.SmsParserTest" time="0.032"/>
+  <testcase name="extractFromIntent returns empty list when no messages()" classname="com.ksetrasevakah.core.sms.SmsParserTest" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

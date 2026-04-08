@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCaseTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:19:40" hostname="cursor" time="0.098">
+  <properties/>
+  <testcase name="Stop when OFF returns error()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCaseTest" time="0.035"/>
+  <testcase name="Start when OFF sends command and transitions to PENDING_START()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCaseTest" time="0.041"/>
+  <testcase name="Start when ON returns error()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCaseTest" time="0.004"/>
+  <testcase name="Stop when ON sends command and transitions to PENDING_STOP()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCaseTest" time="0.007"/>
+  <testcase name="sendCommand failure returns error()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCaseTest" time="0.004"/>
+  <testcase name="any command when PENDING returns error()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCaseTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,6 +1,9 @@
 package com.ksetrasevakah.app;
 
+import com.ksetrasevakah.core.database.di.DatabaseModule;
 import com.ksetrasevakah.core.di.AppModule;
+import com.ksetrasevakah.core.di.RepositoryModule;
+import com.ksetrasevakah.core.sms.di.SmsModule;
 import dagger.Binds;
 import dagger.Component;
 import dagger.Module;
@@ -127,9 +130,12 @@ public final class KsetraSevakahApp_HiltComponents {
       modules = {
           AppModule.class,
           ApplicationContextModule.class,
+          DatabaseModule.class,
           HiltWrapper_FragmentGetContextFix_FragmentGetContextFixModule.class,
           ActivityRetainedCBuilderModule.class,
-          ServiceCBuilderModule.class
+          ServiceCBuilderModule.class,
+          RepositoryModule.class,
+          SmsModule.class
       }
   )
   @Singleton

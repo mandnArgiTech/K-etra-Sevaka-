@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-08T18:19:52" hostname="cursor" time="0.074">
+  <properties/>
+  <testcase name="ALERT creates fault and transitions to OFF()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.05"/>
+  <testcase name="MOTOR OFF confirmation transitions to OFF()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.007"/>
+  <testcase name="MOTOR ON confirmation transitions to ON()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.006"/>
+  <testcase name="ALERT clears pending command()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.006"/>
+  <testcase name="unknown SMS body returns error()" classname="com.ksetrasevakah.feature.pumpiq.domain.usecase.ProcessSmsConfirmationUseCaseTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
