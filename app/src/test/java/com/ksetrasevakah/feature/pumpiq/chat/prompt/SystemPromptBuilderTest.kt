@@ -181,7 +181,7 @@ class SystemPromptBuilderTest {
     fun `build shows camera count when configs exist`() = runTest {
         val cams = listOf(
             CameraConfig(
-                id = "1",
+                id = 1L,
                 cameraName = "C1",
                 mode = CameraMode.ACTIVE,
                 lastSeen = 1L,

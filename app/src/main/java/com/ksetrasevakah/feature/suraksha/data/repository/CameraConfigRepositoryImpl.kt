@@ -45,8 +45,17 @@ class CameraConfigRepositoryImpl @Inject constructor(
             Result.Error(e.message ?: "Failed to update camera mode", e)
         }
 
-    override suspend fun updateCameraMode(cameraId: String, mode: CameraMode): Result<Unit> =
-        updateMode(cameraId, mode)
+    override suspend fun updateCameraMode(id: Long, mode: CameraMode): Result<Unit> {
+        if (id <= 0L) {
+            return Result.Error("Invalid camera id")
+        }
+        return try {
+            dao.updateModeById(id, mode.name)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Failed to update camera mode", e)
+        }
+    }
 
     override suspend fun updateLastSeen(cameraName: String, timestamp: Long): Result<Unit> =
         try {
@@ -57,7 +66,7 @@ class CameraConfigRepositoryImpl @Inject constructor(
         }
 
     private fun CameraConfigEntity.toDomain() = CameraConfig(
-        id = cameraName,
+        id = id,
         cameraName = cameraName,
         mode = CameraMode.fromString(mode),
         lastSeen = lastSeen,
@@ -65,6 +74,7 @@ class CameraConfigRepositoryImpl @Inject constructor(
     )
 
     private fun CameraConfig.toEntity() = CameraConfigEntity(
+        id = id,
         cameraName = cameraName,
         mode = mode.name,
         lastSeen = lastSeen,

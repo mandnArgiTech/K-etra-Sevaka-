@@ -7,4 +7,5 @@ sealed interface DashboardUiEvent {
     data object NavigateBack : DashboardUiEvent
     data class SelectChart(val tab: ChartTab) : DashboardUiEvent
     data object Retry : DashboardUiEvent
+    data object ErrorConsumed : DashboardUiEvent
 }

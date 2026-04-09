@@ -1,7 +1,7 @@
 package com.ksetrasevakah.feature.suraksha.domain.model
 
 data class CameraConfig(
-    val id: String = "",
+    val id: Long = 0L,
     val cameraName: String,
     val name: String = cameraName,
     val mode: CameraMode,

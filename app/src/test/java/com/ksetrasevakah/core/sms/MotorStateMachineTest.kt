@@ -1,5 +1,6 @@
 package com.ksetrasevakah.core.sms
 
+import com.ksetrasevakah.core.common.Result
 import com.ksetrasevakah.core.database.dao.MotorStateDao
 import com.ksetrasevakah.core.database.dao.WorkerActivityDao
 import com.ksetrasevakah.core.database.entity.MotorStateEntity
@@ -10,6 +11,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -32,27 +34,30 @@ class MotorStateMachineTest {
 
         val result = stateMachine.sendStart()
 
-        assertEquals(MotorState.PENDING_START, result)
+        assertTrue(result is Result.Success)
+        assertEquals(MotorState.PENDING_START, (result as Result.Success).data)
         coVerify { motorStateDao.updateState(MotorState.PENDING_START.name, any()) }
     }
 
     @Test
-    fun `sendStart from ON stays ON`() = runTest {
+    fun `sendStart from ON returns error`() = runTest {
         coEvery { motorStateDao.get() } returns entity(MotorState.ON)
 
         val result = stateMachine.sendStart()
 
-        assertEquals(MotorState.ON, result)
+        assertTrue(result is Result.Error)
+        assertEquals("Motor is already running", (result as Result.Error).message)
         coVerify(exactly = 0) { motorStateDao.updateState(MotorState.PENDING_START.name, any()) }
     }
 
     @Test
-    fun `sendStart from PENDING_START stays PENDING_START`() = runTest {
+    fun `sendStart from PENDING_START returns error`() = runTest {
         coEvery { motorStateDao.get() } returns entity(MotorState.PENDING_START)
 
         val result = stateMachine.sendStart()
 
-        assertEquals(MotorState.PENDING_START, result)
+        assertTrue(result is Result.Error)
+        assertEquals("Command already in progress", (result as Result.Error).message)
     }
 
     @Test
@@ -61,17 +66,39 @@ class MotorStateMachineTest {
 
         val result = stateMachine.sendStop()
 
-        assertEquals(MotorState.PENDING_STOP, result)
+        assertTrue(result is Result.Success)
+        assertEquals(MotorState.PENDING_STOP, (result as Result.Success).data)
         coVerify { motorStateDao.updateState(MotorState.PENDING_STOP.name, any()) }
     }
 
     @Test
-    fun `sendStop from OFF stays OFF`() = runTest {
+    fun `sendStop from OFF returns error`() = runTest {
         coEvery { motorStateDao.get() } returns entity(MotorState.OFF)
 
         val result = stateMachine.sendStop()
 
-        assertEquals(MotorState.OFF, result)
+        assertTrue(result is Result.Error)
+        assertEquals("Motor is already off", (result as Result.Error).message)
+    }
+
+    @Test
+    fun `sendStop from PENDING_STOP returns error`() = runTest {
+        coEvery { motorStateDao.get() } returns entity(MotorState.PENDING_STOP)
+
+        val result = stateMachine.sendStop()
+
+        assertTrue(result is Result.Error)
+        assertEquals("Command already in progress", (result as Result.Error).message)
+    }
+
+    @Test
+    fun `sendStop from PENDING_START returns error`() = runTest {
+        coEvery { motorStateDao.get() } returns entity(MotorState.PENDING_START)
+
+        val result = stateMachine.sendStop()
+
+        assertTrue(result is Result.Error)
+        assertEquals("Command already in progress", (result as Result.Error).message)
     }
 
     @Test

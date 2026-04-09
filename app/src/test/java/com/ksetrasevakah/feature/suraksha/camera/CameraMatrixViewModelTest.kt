@@ -52,8 +52,8 @@ class CameraMatrixViewModelTest {
     fun `initial state loads cameras successfully`() = runTest {
         val now = System.currentTimeMillis()
         val cameras = listOf(
-            CameraConfig(id = "cam1", cameraName = "Front Gate", mode = CameraMode.ACTIVE, lastSeen = now, createdAt = now, zone = "A"),
-            CameraConfig(id = "cam2", cameraName = "Back Yard", mode = CameraMode.ACTIVE, lastSeen = now - 20 * 60 * 1000L, createdAt = now, zone = "B")
+            CameraConfig(id = 1L, cameraName = "Front Gate", mode = CameraMode.ACTIVE, lastSeen = now, createdAt = now, zone = "A"),
+            CameraConfig(id = 2L, cameraName = "Back Yard", mode = CameraMode.ACTIVE, lastSeen = now - 20 * 60 * 1000L, createdAt = now, zone = "B")
         )
         val vm = createViewModel(cameras)
         advanceUntilIdle()
@@ -81,13 +81,13 @@ class CameraMatrixViewModelTest {
         val vm = createViewModel()
         advanceUntilIdle()
 
-        coEvery { cameraConfigRepository.updateCameraMode("cam1", CameraMode.SILENT) } returns
+        coEvery { cameraConfigRepository.updateCameraMode(1L, CameraMode.SILENT) } returns
             Result.Success(Unit)
 
-        vm.onEvent(CameraMatrixUiEvent.ChangeCameraMode("cam1", CameraMode.SILENT))
+        vm.onEvent(CameraMatrixUiEvent.ChangeCameraMode(1L, CameraMode.SILENT))
         advanceUntilIdle()
 
-        coVerify { cameraConfigRepository.updateCameraMode("cam1", CameraMode.SILENT) }
+        coVerify { cameraConfigRepository.updateCameraMode(1L, CameraMode.SILENT) }
     }
 
     @Test

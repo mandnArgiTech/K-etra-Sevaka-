@@ -1,5 +1,6 @@
 package com.ksetrasevakah.core.sms
 
+import com.ksetrasevakah.core.common.Result
 import com.ksetrasevakah.core.database.dao.MotorStateDao
 import com.ksetrasevakah.core.database.dao.WorkerActivityDao
 import com.ksetrasevakah.core.database.entity.MotorStateEntity
@@ -13,25 +14,31 @@ class MotorStateMachine @Inject constructor(
     private val workerActivityDao: WorkerActivityDao
 ) {
 
-    suspend fun sendStart(): MotorState {
+    suspend fun sendStart(): Result<MotorState> {
         val current = getCurrentState()
         return when (current) {
             MotorState.OFF -> {
                 updateMotorState(MotorState.PENDING_START, pendingCommand = "START")
-                MotorState.PENDING_START
+                Result.Success(MotorState.PENDING_START)
             }
-            else -> current
+            MotorState.ON ->
+                Result.Error("Motor is already running")
+            MotorState.PENDING_START, MotorState.PENDING_STOP ->
+                Result.Error("Command already in progress")
         }
     }
 
-    suspend fun sendStop(): MotorState {
+    suspend fun sendStop(): Result<MotorState> {
         val current = getCurrentState()
         return when (current) {
             MotorState.ON -> {
                 updateMotorState(MotorState.PENDING_STOP, pendingCommand = "STOP")
-                MotorState.PENDING_STOP
+                Result.Success(MotorState.PENDING_STOP)
             }
-            else -> current
+            MotorState.OFF ->
+                Result.Error("Motor is already off")
+            MotorState.PENDING_START, MotorState.PENDING_STOP ->
+                Result.Error("Command already in progress")
         }
     }
 

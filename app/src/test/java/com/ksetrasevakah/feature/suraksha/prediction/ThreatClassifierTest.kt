@@ -1,6 +1,7 @@
 package com.ksetrasevakah.feature.suraksha.prediction
 
 import com.ksetrasevakah.core.ai.MlcLlmEngine
+import com.ksetrasevakah.core.common.Constants
 import com.ksetrasevakah.core.notification.model.TapoEvent
 import com.ksetrasevakah.feature.suraksha.domain.model.ThreatLevel
 import com.ksetrasevakah.feature.suraksha.prediction.model.ThreatAction
@@ -148,10 +149,10 @@ class ThreatClassifierTest {
     @Test
     fun `classify UNKNOWN uses AI`() = runTest {
         val unknown = personAt(10).copy(eventType = "UNKNOWN")
-        every { engine.generate(any(), any()) } returns flowOf("LOW\nnoise")
+        every { engine.generate(any(), Constants.INGESTION_MODEL_ID) } returns flowOf("LOW\nnoise")
         val result = classifier.classify(unknown)
         assertTrue(result is ThreatAction.LogOnly)
-        verify(atLeast = 1) { engine.generate(any(), any()) }
+        verify(atLeast = 1) { engine.generate(any(), Constants.INGESTION_MODEL_ID) }
     }
 
     @Test
@@ -178,7 +179,7 @@ class ThreatClassifierTest {
     fun `classify falls back on AI exception`() = runTest {
         val unknown = personAt(10).copy(eventType = "UNKNOWN")
         coEvery { spikeDetector.isActivitySpike(any(), any()) } returns false
-        every { engine.generate(any(), any()) } throws RuntimeException("model error")
+        every { engine.generate(any(), Constants.INGESTION_MODEL_ID) } throws RuntimeException("model error")
 
         val result = classifier.classify(unknown)
 

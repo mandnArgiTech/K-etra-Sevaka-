@@ -19,7 +19,7 @@ class SendSmsCommandUseCase @Inject constructor(
         } ?: MotorState.OFF
 
         if (currentState.isPending) {
-            return Result.Error("Command already pending, please wait")
+            return Result.Error("Command already in progress")
         }
 
         when (command) {

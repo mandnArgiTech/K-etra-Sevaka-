@@ -22,6 +22,9 @@ interface CameraConfigDao {
     @Query("UPDATE camera_config SET mode = :mode WHERE camera_name = :cameraName")
     suspend fun updateMode(cameraName: String, mode: String)
 
+    @Query("UPDATE camera_config SET mode = :mode WHERE id = :id")
+    suspend fun updateModeById(id: Long, mode: String)
+
     @Query("UPDATE camera_config SET last_seen = :timestamp WHERE camera_name = :cameraName")
     suspend fun updateLastSeen(cameraName: String, timestamp: Long)
 }

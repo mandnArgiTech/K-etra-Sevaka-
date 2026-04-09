@@ -54,7 +54,7 @@ fun CameraConfigRow(
 
             Column {
                 Text(
-                    text = camera.name.ifEmpty { camera.id },
+                    text = camera.name.ifEmpty { camera.cameraName },
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = KsetraTextPrimary

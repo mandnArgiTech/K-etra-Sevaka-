@@ -5,7 +5,10 @@ import com.ksetrasevakah.designsystem.model.RiskLevel
 
 data class DashboardUiState(
     val isLoading: Boolean = true,
+    /** Motor state repository / observation failures; cleared on next successful observation. */
     val error: String? = null,
+    /** SMS / pump command validation failures; not cleared by motor state flow (snackbar + ErrorConsumed). */
+    val commandFeedback: String? = null,
     val motorState: MotorState = MotorState.OFF,
     val phaseR: Float? = null,
     val phaseY: Float? = null,

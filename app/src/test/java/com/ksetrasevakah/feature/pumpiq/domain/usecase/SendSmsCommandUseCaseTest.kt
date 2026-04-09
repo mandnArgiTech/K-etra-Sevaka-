@@ -78,7 +78,7 @@ class SendSmsCommandUseCaseTest {
         val result = useCase(SmsCommand.Start)
 
         assertTrue(result is Result.Error)
-        assertEquals("Command already pending, please wait", (result as Result.Error).message)
+        assertEquals("Command already in progress", (result as Result.Error).message)
     }
 
     @Test

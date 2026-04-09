@@ -68,7 +68,19 @@ android {
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
+
+    sourceSets.getByName("androidTest").assets.srcDir("src/androidTest/assets")
 }
+
+tasks.register<Copy>("syncRoomSchemasForAndroidTest") {
+    from(layout.projectDirectory.dir("schemas/com.ksetrasevakah.core.database.KsetraDatabase"))
+    into(
+        layout.projectDirectory.dir(
+            "src/androidTest/assets/schemas/com.ksetrasevakah.core.database.KsetraDatabase"
+        )
+    )
+}
+tasks.named("preBuild").configure { dependsOn("syncRoomSchemasForAndroidTest") }
 
 dependencies {
     // Compose BOM

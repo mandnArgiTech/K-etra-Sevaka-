@@ -12,6 +12,7 @@ import com.ksetrasevakah.feature.pumpiq.dashboard.model.DashboardUiEvent
 import com.ksetrasevakah.feature.pumpiq.dashboard.model.DashboardUiState
 import com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +35,12 @@ class DashboardViewModel @Inject constructor(
     private val _navigationEvents = MutableSharedFlow<NavigationTarget>()
     val navigationEvents = _navigationEvents.asSharedFlow()
 
+    /** Last motor state from repository; used to revert optimistic mistakes on SMS errors. */
+    private var lastStableMotorState: MotorState = MotorState.OFF
+
+    private var motorObserveJob: Job? = null
+    private var telemetryObserveJob: Job? = null
+
     init {
         observeMotorState()
         observeTelemetry()
@@ -53,19 +60,30 @@ class DashboardViewModel @Inject constructor(
                 _uiState.update { it.copy(activeChart = event.tab) }
             }
             is DashboardUiEvent.Retry -> {
-                _uiState.update { it.copy(isLoading = true, error = null) }
+                _uiState.update { it.copy(isLoading = true, error = null, commandFeedback = null) }
                 observeMotorState()
                 observeTelemetry()
+            }
+            is DashboardUiEvent.ErrorConsumed -> {
+                _uiState.update { s ->
+                    when {
+                        s.commandFeedback != null -> s.copy(commandFeedback = null)
+                        s.error != null -> s.copy(error = null)
+                        else -> s
+                    }
+                }
             }
         }
     }
 
     private fun observeMotorState() {
-        viewModelScope.launch {
+        motorObserveJob?.cancel()
+        motorObserveJob = viewModelScope.launch {
             motorStateRepository.observeMotorState().collect { result ->
                 when (result) {
                     is Result.Success -> {
                         val state = result.data
+                        lastStableMotorState = state
                         val sessionStart = if (state == MotorState.ON) {
                             when (val dur = motorStateRepository.getSessionDuration()) {
                                 is Result.Success -> System.currentTimeMillis() - dur.data
@@ -96,7 +114,8 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun observeTelemetry() {
-        viewModelScope.launch {
+        telemetryObserveJob?.cancel()
+        telemetryObserveJob = viewModelScope.launch {
             telemetryRepository.observeRecent(days = 1).collect { result ->
                 when (result) {
                     is Result.Success -> {
@@ -121,24 +140,32 @@ class DashboardViewModel @Inject constructor(
 
     private fun startPump() {
         viewModelScope.launch {
-            _uiState.update { it.copy(motorState = MotorState.PENDING_START) }
             when (val result = sendSmsCommandUseCase(SmsCommand.Start)) {
                 is Result.Error -> {
-                    _uiState.update { it.copy(error = result.message) }
+                    _uiState.update {
+                        it.copy(motorState = lastStableMotorState, commandFeedback = result.message)
+                    }
                 }
-                else -> { /* state will update via observeMotorState */ }
+                is Result.Success -> {
+                    _uiState.update { it.copy(commandFeedback = null) }
+                }
+                is Result.Loading -> Unit
             }
         }
     }
 
     private fun stopPump() {
         viewModelScope.launch {
-            _uiState.update { it.copy(motorState = MotorState.PENDING_STOP) }
             when (val result = sendSmsCommandUseCase(SmsCommand.Stop)) {
                 is Result.Error -> {
-                    _uiState.update { it.copy(error = result.message) }
+                    _uiState.update {
+                        it.copy(motorState = lastStableMotorState, commandFeedback = result.message)
+                    }
                 }
-                else -> { /* state will update via observeMotorState */ }
+                is Result.Success -> {
+                    _uiState.update { it.copy(commandFeedback = null) }
+                }
+                is Result.Loading -> Unit
             }
         }
     }

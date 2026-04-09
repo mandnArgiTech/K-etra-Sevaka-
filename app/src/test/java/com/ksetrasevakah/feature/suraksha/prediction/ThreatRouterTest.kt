@@ -39,7 +39,7 @@ class ThreatRouterTest {
     )
 
     private val activeCamera = CameraConfig(
-        id = "Front Door",
+        id = 1L,
         cameraName = "Front Door",
         mode = CameraMode.ACTIVE,
         lastSeen = System.currentTimeMillis(),

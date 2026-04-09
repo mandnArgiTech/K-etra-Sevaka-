@@ -100,7 +100,7 @@ class ThreatClassifier @Inject constructor(
         return try {
             val isSpike = spikeDetector.isActivitySpike(event.cameraName, event.timestamp)
             val prompt = ThreatRouterPrompt.getClassificationPrompt(event, isSpike)
-            val response = engine.generate(prompt, Constants.ORCHESTRATOR_MODEL_ID)
+            val response = engine.generate(prompt, Constants.INGESTION_MODEL_ID)
                 .fold(StringBuilder()) { acc, token -> acc.append(token) }
                 .toString()
                 .trim()

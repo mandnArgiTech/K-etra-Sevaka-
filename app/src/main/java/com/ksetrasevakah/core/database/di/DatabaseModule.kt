@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.ksetrasevakah.core.common.Constants
 import com.ksetrasevakah.core.database.KsetraDatabase
+import com.ksetrasevakah.core.database.MIGRATION_1_2
 import com.ksetrasevakah.core.database.MIGRATION_2_3
 import com.ksetrasevakah.core.database.dao.*
 import dagger.Module
@@ -20,8 +21,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): KsetraDatabase =
         Room.databaseBuilder(context, KsetraDatabase::class.java, Constants.DB_NAME)
-            .addMigrations(MIGRATION_2_3)
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
 
     @Provides fun provideMotorStateDao(db: KsetraDatabase): MotorStateDao = db.motorStateDao()

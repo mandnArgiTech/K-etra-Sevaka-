@@ -70,7 +70,7 @@ class CameraMatrixViewModel @Inject constructor(
         }
     }
 
-    private fun changeCameraMode(cameraId: String, mode: CameraMode) {
+    private fun changeCameraMode(cameraId: Long, mode: CameraMode) {
         viewModelScope.launch {
             when (val result = cameraConfigRepository.updateCameraMode(cameraId, mode)) {
                 is Result.Error -> _uiState.update { it.copy(error = result.message) }

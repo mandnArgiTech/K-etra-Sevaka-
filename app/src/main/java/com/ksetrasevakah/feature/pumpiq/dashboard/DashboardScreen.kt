@@ -22,10 +22,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +65,23 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.commandFeedback, uiState.error) {
+        val cmd = uiState.commandFeedback
+        val err = uiState.error
+        val text = when {
+            !cmd.isNullOrBlank() -> cmd.trim()
+            !err.isNullOrBlank() -> err.trim()
+            cmd != null || err != null -> {
+                viewModel.onEvent(DashboardUiEvent.ErrorConsumed)
+                return@LaunchedEffect
+            }
+            else -> return@LaunchedEffect
+        }
+        snackbarHostState.showSnackbar(text)
+        viewModel.onEvent(DashboardUiEvent.ErrorConsumed)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.navigationEvents.collect { target ->
@@ -74,14 +94,16 @@ fun DashboardScreen(
 
     DashboardContent(
         state = uiState,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        snackbarHostState = snackbarHostState
     )
 }
 
 @Composable
 private fun DashboardContent(
     state: DashboardUiState,
-    onEvent: (DashboardUiEvent) -> Unit
+    onEvent: (DashboardUiEvent) -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Box(
         modifier = Modifier
@@ -158,6 +180,11 @@ private fun DashboardContent(
                 Spacer(modifier = Modifier.height(KsetraSpacing.xxxl))
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
@@ -274,6 +301,7 @@ private fun ChartArea(activeTab: ChartTab) {
 @Composable
 private fun DashboardScreenPreview() {
     KsetraTheme {
+        val snackbarHostState = remember { SnackbarHostState() }
         DashboardContent(
             state = DashboardUiState(
                 isLoading = false,
@@ -286,7 +314,8 @@ private fun DashboardScreenPreview() {
                 sessionStartTime = System.currentTimeMillis() - 3_600_000,
                 dailySummary = "Motor ran for 6h today. Phase balance stable. Grid had 2 brief outages totaling 45 min."
             ),
-            onEvent = {}
+            onEvent = {},
+            snackbarHostState = snackbarHostState
         )
     }
 }

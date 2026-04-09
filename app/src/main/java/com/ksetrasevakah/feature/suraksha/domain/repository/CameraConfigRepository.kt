@@ -10,6 +10,6 @@ interface CameraConfigRepository {
     suspend fun getByName(name: String): Result<CameraConfig?>
     suspend fun insert(config: CameraConfig): Result<Long>
     suspend fun updateMode(cameraName: String, mode: CameraMode): Result<Unit>
-    suspend fun updateCameraMode(cameraId: String, mode: CameraMode): Result<Unit>
+    suspend fun updateCameraMode(id: Long, mode: CameraMode): Result<Unit>
     suspend fun updateLastSeen(cameraName: String, timestamp: Long): Result<Unit>
 }
