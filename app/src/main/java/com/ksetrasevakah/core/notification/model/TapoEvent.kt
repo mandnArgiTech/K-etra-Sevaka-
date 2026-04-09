@@ -5,5 +5,6 @@ data class TapoEvent(
     val eventType: String,
     val timestamp: Long,
     val rawTitle: String,
-    val rawText: String
+    val rawText: String,
+    val sbnKey: String = ""
 )

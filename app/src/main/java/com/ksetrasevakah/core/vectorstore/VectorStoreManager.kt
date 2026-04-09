@@ -13,10 +13,23 @@ class VectorStoreManager @Inject constructor() {
         documents.add(StoredDocument(text, embedding, metadata))
     }
 
-    fun search(queryEmbedding: FloatArray, topK: Int = Constants.VECTOR_SEARCH_TOP_K): List<VectorSearchResult> {
+    fun search(
+        queryEmbedding: FloatArray,
+        topK: Int = Constants.VECTOR_SEARCH_TOP_K,
+        namespaces: Set<String>? = null
+    ): List<VectorSearchResult> {
         if (documents.isEmpty()) return emptyList()
 
-        return documents
+        val pool = if (namespaces.isNullOrEmpty()) {
+            documents
+        } else {
+            documents.filter { doc ->
+                doc.metadata["module"] in namespaces
+            }
+        }
+        if (pool.isEmpty()) return emptyList()
+
+        return pool
             .map { doc ->
                 VectorSearchResult(
                     text = doc.text,

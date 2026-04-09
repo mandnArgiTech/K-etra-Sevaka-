@@ -7,6 +7,7 @@ import com.ksetrasevakah.core.notification.model.TapoEvent
 import com.ksetrasevakah.feature.suraksha.domain.model.ThreatLevel
 import com.ksetrasevakah.feature.suraksha.prediction.model.ThreatAction
 import kotlinx.coroutines.flow.fold
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,7 +24,7 @@ class ThreatClassifier @Inject constructor(
         return classifyWithAi(event)
     }
 
-    internal fun applyRules(event: TapoEvent): ThreatAction? {
+    internal suspend fun applyRules(event: TapoEvent): ThreatAction? {
         val eventType = event.eventType.uppercase()
 
         if (eventType == "TAMPERING") {
@@ -36,7 +37,63 @@ class ThreatClassifier @Inject constructor(
             )
         }
 
+        if (eventType == "PERSON") {
+            val calendar = Calendar.getInstance().apply { timeInMillis = event.timestamp }
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+
+            var level = when (hour) {
+                in 6..17 -> ThreatLevel.LOW
+                in 18..21 -> ThreatLevel.MEDIUM
+                else -> ThreatLevel.HIGH
+            }
+
+            val isSpike = spikeDetector.isActivitySpike(event.cameraName, event.timestamp)
+            if (isSpike) {
+                level = level.elevate()
+            }
+
+            if (hour !in 6..21) {
+                val isCoordinated = spikeDetector.isCoordinatedActivity(event.timestamp)
+                if (isCoordinated) {
+                    level = ThreatLevel.CRITICAL
+                }
+            }
+
+            val summary = buildPersonSummary(event.cameraName, hour, level, isSpike)
+
+            return when {
+                level.isCritical -> ThreatAction.CriticalAlarm(
+                    threatLevel = level,
+                    confidence = 0.9f,
+                    summary = summary,
+                    title = "CRITICAL: Coordinated Intrusion",
+                    cameraName = event.cameraName
+                )
+                level.isAlertable -> ThreatAction.Notify(
+                    threatLevel = level,
+                    confidence = 0.85f,
+                    summary = summary,
+                    title = "${level.name}: Person at ${event.cameraName}"
+                )
+                else -> ThreatAction.LogOnly(
+                    threatLevel = level,
+                    confidence = 0.9f,
+                    summary = summary
+                )
+            }
+        }
+
         return null
+    }
+
+    private fun buildPersonSummary(
+        cameraName: String,
+        hour: Int,
+        level: ThreatLevel,
+        isSpike: Boolean
+    ): String {
+        val spikeNote = if (isSpike) " Activity spike." else ""
+        return "Person at $cameraName (hour=$hour) — ${level.name}.$spikeNote"
     }
 
     internal suspend fun classifyWithAi(event: TapoEvent): ThreatAction {

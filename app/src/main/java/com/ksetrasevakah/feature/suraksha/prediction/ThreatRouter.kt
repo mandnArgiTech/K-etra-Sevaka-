@@ -1,9 +1,12 @@
 package com.ksetrasevakah.feature.suraksha.prediction
 
+import com.ksetrasevakah.core.common.Result
 import com.ksetrasevakah.core.notification.CriticalAlarmManager
 import com.ksetrasevakah.core.notification.KsetraNotificationManager
+import com.ksetrasevakah.core.notification.NotificationDismisser
 import com.ksetrasevakah.core.notification.model.CriticalOverlayData
 import com.ksetrasevakah.core.notification.model.TapoEvent
+import com.ksetrasevakah.feature.suraksha.domain.model.CameraConfig
 import com.ksetrasevakah.feature.suraksha.domain.model.CameraMode
 import com.ksetrasevakah.feature.suraksha.domain.model.EventType
 import com.ksetrasevakah.feature.suraksha.domain.model.SecurityEvent
@@ -24,37 +27,71 @@ class ThreatRouter @Inject constructor(
     private val criticalAlarmManager: CriticalAlarmManager
 ) {
 
-    suspend fun route(event: TapoEvent) {
+    suspend fun route(event: TapoEvent, dismisser: NotificationDismisser) {
         val cameraConfig = cameraConfigRepository.getByName(event.cameraName).getOrNull()
         val mode = cameraConfig?.mode ?: CameraMode.ACTIVE
 
-        if (!mode.shouldProcess) return
-
-        cameraConfigRepository.updateLastSeen(event.cameraName, event.timestamp)
-
-        if (cameraConfig == null) {
-            autoRegisterCamera(event.cameraName, event.timestamp)
+        if (!mode.shouldProcess) {
+            dismisser.dismiss(event.sbnKey)
+            return
         }
 
-        val action = classifier.classify(event)
+        when (cameraConfigRepository.updateLastSeen(event.cameraName, event.timestamp)) {
+            is Result.Error -> { /* non-fatal: continue routing */ }
+            else -> Unit
+        }
 
-        if (action is ThreatAction.Drop) return
+        if (cameraConfig == null) {
+            when (
+                cameraConfigRepository.insert(
+                    CameraConfig(
+                        cameraName = event.cameraName,
+                        mode = CameraMode.ACTIVE,
+                        lastSeen = event.timestamp,
+                        createdAt = event.timestamp
+                    )
+                )
+            ) {
+                is Result.Error -> { /* non-fatal: one-off event still classified */ }
+                else -> Unit
+            }
+        }
 
-        persistEvent(event, action)
+        val action = try {
+            classifier.classify(event)
+        } catch (_: Exception) {
+            ThreatAction.LogOnly(
+                threatLevel = ThreatLevel.MEDIUM,
+                confidence = 0f,
+                summary = "Classification unavailable; event noted for review."
+            )
+        }
+
+        if (action is ThreatAction.Drop) {
+            dismisser.dismiss(event.sbnKey)
+            return
+        }
+
+        try {
+            persistEvent(event, action)
+        } catch (_: Exception) {
+            // Still apply dismissal rules so Tapo anti-fatigue works if DB write fails
+        }
+
+        val threatLevel = extractActionDetails(action).first
+        if (!mode.shouldAlert) {
+            dismisser.dismiss(event.sbnKey)
+        } else if (!threatLevel.isAlertable) {
+            dismisser.dismiss(event.sbnKey)
+        }
 
         if (!mode.shouldAlert) return
 
-        executeAction(action)
-    }
-
-    private suspend fun autoRegisterCamera(cameraName: String, timestamp: Long) {
-        val config = com.ksetrasevakah.feature.suraksha.domain.model.CameraConfig(
-            cameraName = cameraName,
-            mode = CameraMode.ACTIVE,
-            lastSeen = timestamp,
-            createdAt = timestamp
-        )
-        cameraConfigRepository.insert(config)
+        try {
+            executeAction(action)
+        } catch (_: Exception) {
+            // HIGH/CRITICAL Tapo notification remains if app alert path fails
+        }
     }
 
     private suspend fun persistEvent(event: TapoEvent, action: ThreatAction) {
@@ -72,7 +109,11 @@ class ThreatRouter @Inject constructor(
             summary = summary
         )
 
-        eventRepository.insert(securityEvent)
+        when (val r = eventRepository.insert(securityEvent)) {
+            is Result.Success -> Unit
+            is Result.Error -> throw IllegalStateException(r.message ?: "Security event insert failed")
+            is Result.Loading -> Unit
+        }
     }
 
     private fun executeAction(action: ThreatAction) {

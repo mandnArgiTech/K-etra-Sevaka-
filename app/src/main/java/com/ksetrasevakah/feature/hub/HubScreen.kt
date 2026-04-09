@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -34,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ksetrasevakah.designsystem.component.GlowEffect
 import com.ksetrasevakah.designsystem.component.KsetraCard
 import com.ksetrasevakah.designsystem.component.SectionHeader
@@ -44,6 +46,7 @@ import com.ksetrasevakah.designsystem.theme.KsetraTextDisabled
 import com.ksetrasevakah.designsystem.theme.KsetraTextPrimary
 import com.ksetrasevakah.designsystem.theme.KsetraTextSecondary
 import com.ksetrasevakah.designsystem.theme.KsetraTheme
+import com.ksetrasevakah.designsystem.theme.KsetraRed
 import com.ksetrasevakah.designsystem.theme.SurakshaShieldBlue
 
 @Composable
@@ -53,10 +56,12 @@ fun HubScreen(
     onNavigateToSettings: () -> Unit,
     viewModel: HubViewModel = hiltViewModel()
 ) {
+    val hubState by viewModel.uiState.collectAsStateWithLifecycle()
     HubContent(
         onNavigateToDashboard = onNavigateToDashboard,
         onNavigateToSuraksha = onNavigateToSuraksha,
-        onNavigateToSettings = onNavigateToSettings
+        onNavigateToSettings = onNavigateToSettings,
+        surakshaUnacknowledgedAlerts = hubState.unacknowledgedHighAlerts
     )
 }
 
@@ -64,7 +69,8 @@ fun HubScreen(
 private fun HubContent(
     onNavigateToDashboard: () -> Unit,
     onNavigateToSuraksha: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    surakshaUnacknowledgedAlerts: Int = 0
 ) {
     Box(
         modifier = Modifier
@@ -120,6 +126,7 @@ private fun HubContent(
                 description = "Farm security monitoring & threat detection",
                 isActive = true,
                 accentColor = SurakshaShieldBlue,
+                badgeCount = surakshaUnacknowledgedAlerts,
                 onClick = onNavigateToSuraksha
             )
 
@@ -163,6 +170,7 @@ private fun ModuleCard(
     description: String,
     isActive: Boolean,
     accentColor: Color = KsetraAccentGreen,
+    badgeCount: Int = 0,
     onClick: () -> Unit
 ) {
     KsetraCard(
@@ -185,6 +193,21 @@ private fun ModuleCard(
                         style = MaterialTheme.typography.headlineSmall,
                         color = KsetraTextPrimary
                     )
+                    if (badgeCount > 0) {
+                        Box(
+                            modifier = Modifier
+                                .background(KsetraRed, CircleShape)
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (badgeCount > 99) "99+" else badgeCount.toString(),
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                     if (!isActive) {
                         ComingSoonBadge()
                     }

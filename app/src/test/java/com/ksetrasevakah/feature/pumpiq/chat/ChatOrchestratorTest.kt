@@ -8,6 +8,7 @@ import com.ksetrasevakah.core.domain.repository.ChatRepository
 import com.ksetrasevakah.feature.pumpiq.chat.prompt.ContextAssembler
 import com.ksetrasevakah.feature.pumpiq.chat.prompt.SystemPromptBuilder
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -51,6 +52,7 @@ class ChatOrchestratorTest {
 
         assertTrue(result is Result.Success)
         assertEquals("The motor is healthy.", (result as Result.Success).data)
+        coVerify(exactly = 1) { systemPromptBuilder.build(ragQuery = "How is my motor?") }
     }
 
     @Test

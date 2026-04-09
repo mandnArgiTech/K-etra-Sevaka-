@@ -47,7 +47,7 @@ class SurakshaDashboardViewModelTest {
 
     private fun stubDefaults() {
         coEvery { securityEventRepository.getThreatCounts() } returns Result.Success(emptyMap())
-        coEvery { securityEventRepository.getUnacknowledgedCount() } returns Result.Success(0)
+        every { securityEventRepository.getUnacknowledgedCount() } returns flowOf(Result.Success(0))
         every { securityEventRepository.observeEvents(any()) } returns flowOf(Result.Success(emptyList()))
         coEvery { briefingGenerator.generate() } returns Result.Success("All clear.")
     }
@@ -61,7 +61,7 @@ class SurakshaDashboardViewModelTest {
     fun `initial state loads threat counts successfully`() = runTest {
         val counts = mapOf(ThreatLevel.CRITICAL to 2, ThreatLevel.HIGH to 5)
         coEvery { securityEventRepository.getThreatCounts() } returns Result.Success(counts)
-        coEvery { securityEventRepository.getUnacknowledgedCount() } returns Result.Success(3)
+        every { securityEventRepository.getUnacknowledgedCount() } returns flowOf(Result.Success(3))
         every { securityEventRepository.observeEvents(any()) } returns flowOf(Result.Success(emptyList()))
         coEvery { briefingGenerator.generate() } returns Result.Success("Briefing text")
 
@@ -72,6 +72,7 @@ class SurakshaDashboardViewModelTest {
         assertFalse(state.isLoading)
         assertEquals(2, state.threatCounts[ThreatLevel.CRITICAL])
         assertEquals(5, state.threatCounts[ThreatLevel.HIGH])
+        assertEquals(3, state.unacknowledgedCount)
     }
 
     @Test
@@ -91,7 +92,7 @@ class SurakshaDashboardViewModelTest {
             )
         )
         coEvery { securityEventRepository.getThreatCounts() } returns Result.Success(emptyMap())
-        coEvery { securityEventRepository.getUnacknowledgedCount() } returns Result.Success(1)
+        every { securityEventRepository.getUnacknowledgedCount() } returns flowOf(Result.Success(1))
         every { securityEventRepository.observeEvents(any()) } returns flowOf(Result.Success(events))
         coEvery { briefingGenerator.generate() } returns Result.Success("")
 
@@ -106,7 +107,7 @@ class SurakshaDashboardViewModelTest {
     @Test
     fun `error from repository is reflected in UI state`() = runTest {
         coEvery { securityEventRepository.getThreatCounts() } returns Result.Error("Network failure")
-        coEvery { securityEventRepository.getUnacknowledgedCount() } returns Result.Success(0)
+        every { securityEventRepository.getUnacknowledgedCount() } returns flowOf(Result.Success(0))
         every { securityEventRepository.observeEvents(any()) } returns flowOf(Result.Success(emptyList()))
         coEvery { briefingGenerator.generate() } returns Result.Success("")
 
@@ -132,7 +133,7 @@ class SurakshaDashboardViewModelTest {
     @Test
     fun `briefing is loaded into state`() = runTest {
         coEvery { securityEventRepository.getThreatCounts() } returns Result.Success(emptyMap())
-        coEvery { securityEventRepository.getUnacknowledgedCount() } returns Result.Success(0)
+        every { securityEventRepository.getUnacknowledgedCount() } returns flowOf(Result.Success(0))
         every { securityEventRepository.observeEvents(any()) } returns flowOf(Result.Success(emptyList()))
         coEvery { briefingGenerator.generate() } returns Result.Success("Farm is secure today.")
 

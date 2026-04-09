@@ -22,7 +22,8 @@ class ChatOrchestrator @Inject constructor(
         return try {
             modelManager.loadOrchestratorModel()
 
-            val systemPrompt = systemPromptBuilder.build()
+            val ragQuery = userMessage.trim().take(Constants.RAG_QUERY_MAX_CHARS)
+            val systemPrompt = systemPromptBuilder.build(ragQuery = ragQuery)
             val context = contextAssembler.assemble(threadId)
             val fullPrompt = buildString {
                 appendLine(systemPrompt)

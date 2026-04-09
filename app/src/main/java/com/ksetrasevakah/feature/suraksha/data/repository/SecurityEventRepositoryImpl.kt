@@ -85,14 +85,30 @@ class SecurityEventRepositoryImpl @Inject constructor(
             Result.Error(e.message ?: "Failed to get events in window", e)
         }
 
-    override suspend fun getUnacknowledgedHighCount(): Result<Int> =
+    override suspend fun getRecentEventsSince(since: Long): Result<List<SecurityEvent>> =
         try {
-            Result.Success(dao.getUnacknowledgedHighCount())
+            Result.Success(dao.getRecentEventsList(since).map { it.toDomain() })
         } catch (e: Exception) {
-            Result.Error(e.message ?: "Failed to get unacknowledged count", e)
+            Result.Error(e.message ?: "Failed to get recent security events", e)
         }
 
-    override suspend fun getUnacknowledgedCount(): Result<Int> = getUnacknowledgedHighCount()
+    override suspend fun getLatestEvent(): Result<SecurityEvent?> =
+        try {
+            Result.Success(dao.getLatest()?.toDomain())
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Failed to get latest security event", e)
+        }
+
+    override fun getUnacknowledgedHighCount(): Flow<Result<Int>> =
+        dao.getUnacknowledgedHighCount().map { count ->
+            try {
+                Result.Success(count)
+            } catch (e: Exception) {
+                Result.Error(e.message ?: "Failed to get unacknowledged count", e)
+            }
+        }
+
+    override fun getUnacknowledgedCount(): Flow<Result<Int>> = getUnacknowledgedHighCount()
 
     override suspend fun insert(event: SecurityEvent): Result<Long> =
         try {
@@ -121,7 +137,7 @@ class SecurityEventRepositoryImpl @Inject constructor(
         receivedTimestamp = receivedTimestamp,
         hourOfDay = hourOfDay,
         summary = summary,
-        acknowledged = acknowledged
+        acknowledged = acknowledged != 0
     )
 
     private fun SecurityEvent.toEntity() = SecurityEventEntity(
@@ -134,6 +150,6 @@ class SecurityEventRepositoryImpl @Inject constructor(
         receivedTimestamp = receivedTimestamp,
         hourOfDay = hourOfDay,
         summary = summary,
-        acknowledged = acknowledged
+        acknowledged = if (acknowledged) 1 else 0
     )
 }

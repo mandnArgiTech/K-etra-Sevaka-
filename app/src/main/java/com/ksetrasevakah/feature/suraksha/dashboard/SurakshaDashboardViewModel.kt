@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -33,7 +34,20 @@ class SurakshaDashboardViewModel @Inject constructor(
     val navigationEvents = _navigationEvents.asSharedFlow()
 
     init {
+        observeUnacknowledgedHighCount()
         loadDashboard()
+    }
+
+    private fun observeUnacknowledgedHighCount() {
+        viewModelScope.launch {
+            securityEventRepository.getUnacknowledgedCount().collectLatest { result ->
+                when (result) {
+                    is Result.Success -> _uiState.update { it.copy(unacknowledgedCount = result.data) }
+                    is Result.Error -> { /* non-fatal */ }
+                    is Result.Loading -> { /* no-op */ }
+                }
+            }
+        }
     }
 
     fun onEvent(event: SurakshaDashboardUiEvent) {
@@ -58,7 +72,6 @@ class SurakshaDashboardViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null) }
 
             loadThreatCounts()
-            loadUnacknowledgedCount()
             observeEvents()
             loadBriefing()
         }
@@ -69,16 +82,6 @@ class SurakshaDashboardViewModel @Inject constructor(
             when (val result = securityEventRepository.getThreatCounts()) {
                 is Result.Success -> _uiState.update { it.copy(threatCounts = result.data) }
                 is Result.Error -> _uiState.update { it.copy(error = result.message) }
-                is Result.Loading -> { /* no-op */ }
-            }
-        }
-    }
-
-    private fun loadUnacknowledgedCount() {
-        viewModelScope.launch {
-            when (val result = securityEventRepository.getUnacknowledgedCount()) {
-                is Result.Success -> _uiState.update { it.copy(unacknowledgedCount = result.data) }
-                is Result.Error -> { /* non-fatal */ }
                 is Result.Loading -> { /* no-op */ }
             }
         }
@@ -120,7 +123,7 @@ class SurakshaDashboardViewModel @Inject constructor(
     private fun acknowledgeEvent(eventId: Long) {
         viewModelScope.launch {
             when (securityEventRepository.acknowledgeEvent(eventId)) {
-                is Result.Success -> loadUnacknowledgedCount()
+                is Result.Success -> { /* Room Flow updates unacknowledged count */ }
                 is Result.Error -> { /* silently handled */ }
                 is Result.Loading -> { /* no-op */ }
             }

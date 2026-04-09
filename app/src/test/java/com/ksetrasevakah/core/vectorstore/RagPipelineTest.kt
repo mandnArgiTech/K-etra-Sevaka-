@@ -1,5 +1,6 @@
 package com.ksetrasevakah.core.vectorstore
 
+import com.ksetrasevakah.core.common.Constants
 import com.ksetrasevakah.core.common.Result
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -49,7 +50,7 @@ class RagPipelineTest {
     fun `query returns formatted results`() = runTest {
         val embedding = floatArrayOf(1f, 0f, 0f)
         coEvery { embeddingGenerator.generate("query") } returns Result.Success(embedding)
-        coEvery { vectorStoreManager.search(embedding, any()) } returns listOf(
+        coEvery { vectorStoreManager.search(embedding, any(), any()) } returns listOf(
             com.ksetrasevakah.core.vectorstore.model.VectorSearchResult("doc1", 0.95f),
             com.ksetrasevakah.core.vectorstore.model.VectorSearchResult("doc2", 0.80f)
         )
@@ -66,11 +67,34 @@ class RagPipelineTest {
     fun `query returns empty string when no results`() = runTest {
         val embedding = floatArrayOf(1f, 0f, 0f)
         coEvery { embeddingGenerator.generate("query") } returns Result.Success(embedding)
-        coEvery { vectorStoreManager.search(embedding, any()) } returns emptyList()
+        coEvery { vectorStoreManager.search(embedding, any(), any()) } returns emptyList()
 
         val result = pipeline.query("query")
 
         assertTrue(result is Result.Success)
         assertEquals("", (result as Result.Success).data)
+    }
+
+    @Test
+    fun `query falls back to unfiltered search when namespaces return nothing`() = runTest {
+        val embedding = floatArrayOf(1f, 0f, 0f)
+        coEvery { embeddingGenerator.generate("q") } returns Result.Success(embedding)
+        coEvery {
+            vectorStoreManager.search(
+                embedding,
+                Constants.VECTOR_SEARCH_TOP_K,
+                setOf(Constants.RAG_MODULE_PUMPIQ, Constants.RAG_MODULE_SURAKSHA)
+            )
+        } returns emptyList()
+        coEvery {
+            vectorStoreManager.search(embedding, Constants.VECTOR_SEARCH_TOP_K, null)
+        } returns listOf(
+            com.ksetrasevakah.core.vectorstore.model.VectorSearchResult("legacy doc", 0.9f)
+        )
+
+        val result = pipeline.query("q", namespaces = setOf("PumpIQ", "Suraksha"))
+
+        assertTrue(result is Result.Success)
+        assertTrue((result as Result.Success).data.contains("legacy doc"))
     }
 }

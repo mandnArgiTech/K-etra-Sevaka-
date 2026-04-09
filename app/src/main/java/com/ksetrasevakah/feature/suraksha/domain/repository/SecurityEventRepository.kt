@@ -17,8 +17,13 @@ interface SecurityEventRepository {
     suspend fun getActivitySpikes(windowStart: Long, windowEnd: Long): Result<List<CameraCount>>
     suspend fun getEventsForCamera(cameraName: String, limit: Int = 20): Result<List<SecurityEvent>>
     suspend fun getEventsInWindow(windowMs: Long): Result<List<SecurityEvent>>
-    suspend fun getUnacknowledgedHighCount(): Result<Int>
-    suspend fun getUnacknowledgedCount(): Result<Int>
+
+    suspend fun getRecentEventsSince(since: Long): Result<List<SecurityEvent>>
+
+    suspend fun getLatestEvent(): Result<SecurityEvent?>
+    fun getUnacknowledgedHighCount(): Flow<Result<Int>>
+
+    fun getUnacknowledgedCount(): Flow<Result<Int>>
     suspend fun insert(event: SecurityEvent): Result<Long>
     suspend fun acknowledge(eventId: Long): Result<Unit>
     suspend fun acknowledgeEvent(eventId: Long): Result<Unit>

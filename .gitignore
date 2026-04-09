@@ -4,8 +4,9 @@ app/build/
 *.apk
 *.aab
 
-# Gradle
+# Gradle / Kotlin build caches
 .gradle/
+.kotlin/
 local.properties
 
 # IDE

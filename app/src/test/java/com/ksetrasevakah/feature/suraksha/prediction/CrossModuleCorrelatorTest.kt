@@ -1,6 +1,11 @@
 package com.ksetrasevakah.feature.suraksha.prediction
 
 import com.ksetrasevakah.core.common.Result
+import com.ksetrasevakah.core.database.entity.FaultEntity
+import com.ksetrasevakah.core.database.entity.TelemetryEntity
+import com.ksetrasevakah.core.domain.repository.FaultRepository
+import com.ksetrasevakah.core.domain.repository.TelemetryRepository
+import com.ksetrasevakah.designsystem.model.RiskLevel
 import com.ksetrasevakah.feature.suraksha.domain.model.EventType
 import com.ksetrasevakah.feature.suraksha.domain.model.SecurityEvent
 import com.ksetrasevakah.feature.suraksha.domain.model.ThreatLevel
@@ -16,94 +21,126 @@ import org.junit.jupiter.api.Test
 class CrossModuleCorrelatorTest {
 
     private lateinit var securityEventRepository: SecurityEventRepository
+    private lateinit var telemetryRepository: TelemetryRepository
+    private lateinit var faultRepository: FaultRepository
     private lateinit var correlator: CrossModuleCorrelator
 
     @BeforeEach
     fun setup() {
-        securityEventRepository = mockk()
-        correlator = CrossModuleCorrelator(securityEventRepository)
+        securityEventRepository = mockk(relaxed = true)
+        telemetryRepository = mockk(relaxed = true)
+        faultRepository = mockk(relaxed = true)
+        correlator = CrossModuleCorrelator(
+            securityEventRepository,
+            telemetryRepository,
+            faultRepository
+        )
     }
 
-    private fun makeEvent(
-        id: Long,
-        timestamp: Long,
-        eventType: EventType,
-        threatLevel: ThreatLevel
-    ) = SecurityEvent(
-        id = id,
-        cameraName = "TestCam",
-        eventType = eventType,
-        threatLevel = threatLevel,
-        confidence = 0.8f,
-        originTimestamp = timestamp,
-        receivedTimestamp = timestamp,
-        hourOfDay = 12
+    private fun secPerson(ts: Long) = SecurityEvent(
+        id = 1L,
+        cameraName = "Transformer Cam",
+        eventType = EventType.PERSON,
+        threatLevel = ThreatLevel.HIGH,
+        confidence = 0.9f,
+        originTimestamp = ts,
+        receivedTimestamp = ts,
+        hourOfDay = 22
+    )
+
+    private fun secTamper(ts: Long) = SecurityEvent(
+        id = 2L,
+        cameraName = "Gate",
+        eventType = EventType.TAMPERING,
+        threatLevel = ThreatLevel.CRITICAL,
+        confidence = 0.95f,
+        originTimestamp = ts,
+        receivedTimestamp = ts,
+        hourOfDay = 3
     )
 
     @Test
-    fun `returns empty list when fewer than 2 events`() = runTest {
-        val singleEvent = makeEvent(1L, System.currentTimeMillis(), EventType.UNKNOWN, ThreatLevel.LOW)
-        coEvery { securityEventRepository.getEventsInWindow(any()) } returns
-            Result.Success(listOf(singleEvent))
-
-        val result = correlator.findTemporalCorrelations()
-        assertTrue(result is Result.Success)
-        assertEquals(0, (result as Result.Success).data.size)
-    }
-
-    @Test
-    fun `finds correlation when events cluster within window`() = runTest {
-        val now = System.currentTimeMillis()
-        val events = listOf(
-            makeEvent(1L, now, EventType.PERSON, ThreatLevel.MEDIUM),
-            makeEvent(2L, now + 30_000L, EventType.TAMPERING, ThreatLevel.HIGH),
-            makeEvent(3L, now + 60_000L, EventType.UNKNOWN, ThreatLevel.LOW)
+    fun `PERSON near power telemetry yields PERSON_NEAR_POWER_FAILURE`() = runTest {
+        val t0 = 1_000_000L
+        coEvery { securityEventRepository.getRecentEventsSince(any()) } returns Result.Success(listOf(secPerson(t0)))
+        coEvery { telemetryRepository.getRecentSince(any()) } returns Result.Success(
+            listOf(
+                TelemetryEntity(
+                    rawSms = "",
+                    timestamp = t0 + 120_000L,
+                    motorOn = false,
+                    narrative = "Power outage detected at panel"
+                )
+            )
         )
-        coEvery { securityEventRepository.getEventsInWindow(any()) } returns
-            Result.Success(events)
+        coEvery { faultRepository.getRecentSince(any()) } returns Result.Success(emptyList())
 
-        val result = correlator.findTemporalCorrelations()
+        val result = correlator.findCrossModuleCorrelations(0L, windowMs = 300_000L)
         assertTrue(result is Result.Success)
-        val correlations = (result as Result.Success).data
-        assertTrue(correlations.isNotEmpty())
-        assertTrue(correlations.first().securityEvents.size >= 2)
+        val list = (result as Result.Success).data
+        assertEquals(1, list.size)
+        assertEquals("PERSON_NEAR_POWER_FAILURE", list[0].correlationType)
+        assertEquals(RiskLevel.HIGH, list[0].severity)
     }
 
     @Test
-    fun `correlation score is between 0 and 1`() = runTest {
-        val now = System.currentTimeMillis()
-        val events = listOf(
-            makeEvent(1L, now, EventType.PERSON, ThreatLevel.MEDIUM),
-            makeEvent(2L, now + 1000L, EventType.TAMPERING, ThreatLevel.HIGH)
+    fun `TAMPERING near fault yields TAMPERING_PLUS_FAULT CRITICAL`() = runTest {
+        val t0 = 2_000_000L
+        coEvery { securityEventRepository.getRecentEventsSince(any()) } returns Result.Success(listOf(secTamper(t0)))
+        coEvery { telemetryRepository.getRecentSince(any()) } returns Result.Success(emptyList())
+        coEvery { faultRepository.getRecentSince(any()) } returns Result.Success(
+            listOf(
+                FaultEntity(
+                    timestamp = t0 + 120_000L,
+                    faultType = "DRY_RUN",
+                    description = "Dry run"
+                )
+            )
         )
-        coEvery { securityEventRepository.getEventsInWindow(any()) } returns
-            Result.Success(events)
 
-        val result = correlator.findTemporalCorrelations()
+        val result = correlator.findCrossModuleCorrelations(0L, windowMs = 300_000L)
         assertTrue(result is Result.Success)
-        val correlations = (result as Result.Success).data
-        correlations.forEach { correlation ->
-            assertTrue(correlation.correlationScore in 0f..1f)
-        }
+        val list = (result as Result.Success).data
+        assertEquals(1, list.size)
+        assertEquals("TAMPERING_PLUS_FAULT", list[0].correlationType)
+        assertEquals(RiskLevel.CRITICAL, list[0].severity)
     }
 
     @Test
-    fun `returns error when repository fails`() = runTest {
-        coEvery { securityEventRepository.getEventsInWindow(any()) } returns
-            Result.Error("DB error")
+    fun `no security events returns empty`() = runTest {
+        coEvery { securityEventRepository.getRecentEventsSince(any()) } returns Result.Success(emptyList())
+        coEvery { telemetryRepository.getRecentSince(any()) } returns Result.Success(
+            listOf(
+                TelemetryEntity(
+                    rawSms = "",
+                    timestamp = 1L,
+                    motorOn = true,
+                    narrative = "Power outage"
+                )
+            )
+        )
 
-        val result = correlator.findTemporalCorrelations()
+        val result = correlator.findCrossModuleCorrelations(0L)
+        assertTrue(result is Result.Success)
+        assertTrue((result as Result.Success).data.isEmpty())
+    }
+
+    @Test
+    fun `no PumpIQ data still returns success for person event`() = runTest {
+        coEvery { securityEventRepository.getRecentEventsSince(any()) } returns Result.Success(listOf(secPerson(1L)))
+        coEvery { telemetryRepository.getRecentSince(any()) } returns Result.Success(emptyList())
+        coEvery { faultRepository.getRecentSince(any()) } returns Result.Success(emptyList())
+
+        val result = correlator.findCrossModuleCorrelations(0L)
+        assertTrue(result is Result.Success)
+        assertTrue((result as Result.Success).data.isEmpty())
+    }
+
+    @Test
+    fun `security repository error propagates`() = runTest {
+        coEvery { securityEventRepository.getRecentEventsSince(any()) } returns Result.Error("db")
+
+        val result = correlator.findCrossModuleCorrelations(0L)
         assertTrue(result is Result.Error)
-        assertEquals("DB error", (result as Result.Error).message)
-    }
-
-    @Test
-    fun `returns empty list for empty events`() = runTest {
-        coEvery { securityEventRepository.getEventsInWindow(any()) } returns
-            Result.Success(emptyList())
-
-        val result = correlator.findTemporalCorrelations()
-        assertTrue(result is Result.Success)
-        assertEquals(0, (result as Result.Success).data.size)
     }
 }

@@ -22,11 +22,17 @@ class RagPipeline @Inject constructor(
 
     suspend fun query(
         queryText: String,
-        topK: Int = Constants.VECTOR_SEARCH_TOP_K
+        topK: Int = Constants.VECTOR_SEARCH_TOP_K,
+        namespaces: Set<String>? = null
     ): Result<String> {
         return when (val embeddingResult = embeddingGenerator.generate(queryText)) {
             is Result.Success -> {
-                val results = vectorStoreManager.search(embeddingResult.data, topK)
+                val embedding = embeddingResult.data
+                var results = vectorStoreManager.search(embedding, topK, namespaces)
+                // Legacy or untagged documents have no module metadata — fall back so chat RAG still works
+                if (results.isEmpty() && namespaces != null) {
+                    results = vectorStoreManager.search(embedding, topK, namespaces = null)
+                }
                 if (results.isEmpty()) {
                     Result.Success("")
                 } else {

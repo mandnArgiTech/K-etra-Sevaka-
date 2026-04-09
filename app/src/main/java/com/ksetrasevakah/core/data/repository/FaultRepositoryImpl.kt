@@ -38,4 +38,11 @@ class FaultRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.Error(e.message ?: "Failed to insert fault", e)
         }
+
+    override suspend fun getRecentSince(since: Long): Result<List<FaultEntity>> =
+        try {
+            Result.Success(dao.getRecentSince(since))
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Failed to get faults since", e)
+        }
 }

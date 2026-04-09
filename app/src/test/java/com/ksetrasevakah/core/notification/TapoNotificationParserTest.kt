@@ -52,12 +52,14 @@ class TapoNotificationParserTest {
         val event = TapoNotificationParser.parse(
             title = "Driveway: Person detected",
             text = "A person was seen",
-            whenMs = 1000L
+            originTimestamp = 1000L,
+            sbnKey = "pkg|1|tag"
         )
         assertEquals("Driveway", event.cameraName)
         assertEquals("PERSON", event.eventType)
         assertEquals(1000L, event.timestamp)
         assertEquals("Driveway: Person detected", event.rawTitle)
         assertEquals("A person was seen", event.rawText)
+        assertEquals("pkg|1|tag", event.sbnKey)
     }
 }

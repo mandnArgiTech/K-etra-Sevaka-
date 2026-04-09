@@ -24,6 +24,9 @@ interface FaultDao {
     @Query("SELECT * FROM fault_log ORDER BY timestamp DESC LIMIT :limit")
     suspend fun getRecentList(limit: Int = 50): List<FaultEntity>
 
+    @Query("SELECT * FROM fault_log WHERE timestamp >= :since ORDER BY timestamp DESC")
+    suspend fun getRecentSince(since: Long): List<FaultEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: FaultEntity): Long
 }

@@ -31,6 +31,13 @@ class TelemetryRepositoryImpl @Inject constructor(
             Result.Error(e.message ?: "Failed to get telemetry list", e)
         }
 
+    override suspend fun getRecentSince(since: Long): Result<List<TelemetryEntity>> =
+        try {
+            Result.Success(dao.getRecentList(since))
+        } catch (e: Exception) {
+            Result.Error(e.message ?: "Failed to get telemetry since", e)
+        }
+
     override suspend fun getAvgVoltage(since: Long, until: Long): Result<Float?> =
         try {
             Result.Success(dao.getAvgVoltage(since, until))

@@ -20,15 +20,16 @@ object TapoNotificationParser {
         "lens blocked" to "TAMPERING"
     )
 
-    fun parse(title: String, text: String, whenMs: Long): TapoEvent {
+    fun parse(title: String, text: String, originTimestamp: Long, sbnKey: String): TapoEvent {
         val cameraName = extractCameraName(title, text)
         val eventType = extractEventType(title, text)
         return TapoEvent(
             cameraName = cameraName,
             eventType = eventType,
-            timestamp = whenMs,
+            timestamp = originTimestamp,
             rawTitle = title,
-            rawText = text
+            rawText = text,
+            sbnKey = sbnKey
         )
     }
 

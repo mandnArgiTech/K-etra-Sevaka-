@@ -24,5 +24,5 @@ data class SecurityEventEntity(
     @ColumnInfo(name = "received_timestamp") val receivedTimestamp: Long,
     @ColumnInfo(name = "hour_of_day") val hourOfDay: Int,
     @ColumnInfo(name = "summary") val summary: String? = null,
-    @ColumnInfo(name = "acknowledged") val acknowledged: Boolean = false
+    @ColumnInfo(name = "acknowledged") val acknowledged: Int = 0
 )

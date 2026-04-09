@@ -15,6 +15,12 @@ object Constants {
     const val FORGOT_OFF_THRESHOLD_MINUTES = 45
     const val MAX_CHAT_CONTEXT_MESSAGES = 10
     const val VECTOR_SEARCH_TOP_K = 5
+    const val RAG_MODULE_PUMPIQ = "PumpIQ"
+    const val RAG_MODULE_SURAKSHA = "Suraksha"
+    /** Rough cap (~4096 tokens) for assembled system prompt text */
+    const val SYSTEM_PROMPT_MAX_CHARS = 14_000
+    /** Cap RAG embedding input from chat to bound latency and cost */
+    const val RAG_QUERY_MAX_CHARS = 512
     const val BACKUP_SCHEDULE_HOUR = 2
 
     const val TAPO_PACKAGE_NAME = "com.tplink.iot"

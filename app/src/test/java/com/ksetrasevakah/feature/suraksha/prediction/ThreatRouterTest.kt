@@ -3,6 +3,7 @@ package com.ksetrasevakah.feature.suraksha.prediction
 import com.ksetrasevakah.core.common.Result
 import com.ksetrasevakah.core.notification.CriticalAlarmManager
 import com.ksetrasevakah.core.notification.KsetraNotificationManager
+import com.ksetrasevakah.core.notification.NotificationDismisser
 import com.ksetrasevakah.core.notification.model.TapoEvent
 import com.ksetrasevakah.feature.suraksha.domain.model.CameraConfig
 import com.ksetrasevakah.feature.suraksha.domain.model.CameraMode
@@ -25,6 +26,7 @@ class ThreatRouterTest {
     private lateinit var cameraConfigRepository: CameraConfigRepository
     private lateinit var notificationManager: KsetraNotificationManager
     private lateinit var criticalAlarmManager: CriticalAlarmManager
+    private lateinit var dismisser: NotificationDismisser
     private lateinit var router: ThreatRouter
 
     private val testEvent = TapoEvent(
@@ -32,7 +34,8 @@ class ThreatRouterTest {
         eventType = "PERSON",
         timestamp = System.currentTimeMillis(),
         rawTitle = "Front Door: Person",
-        rawText = "Person detected"
+        rawText = "Person detected",
+        sbnKey = "test|0|pkg"
     )
 
     private val activeCamera = CameraConfig(
@@ -50,6 +53,7 @@ class ThreatRouterTest {
         cameraConfigRepository = mockk(relaxed = true)
         notificationManager = mockk(relaxed = true)
         criticalAlarmManager = mockk(relaxed = true)
+        dismisser = mockk(relaxed = true)
 
         router = ThreatRouter(
             classifier = classifier,
@@ -65,30 +69,45 @@ class ThreatRouterTest {
     }
 
     @Test
-    fun `route skips processing when camera mode is DROP`() = runTest {
+    fun `route DROP mode dismisses and skips classify`() = runTest {
         val dropCamera = activeCamera.copy(mode = CameraMode.DROP)
         coEvery { cameraConfigRepository.getByName("Front Door") } returns Result.Success(dropCamera)
 
-        router.route(testEvent)
+        router.route(testEvent, dismisser)
 
+        verify { dismisser.dismiss(testEvent.sbnKey) }
         coVerify(exactly = 0) { classifier.classify(any()) }
     }
 
     @Test
-    fun `route persists event for ACTIVE camera`() = runTest {
+    fun `route ACTIVE LOW dismisses Tapo notification`() = runTest {
         coEvery { classifier.classify(any()) } returns ThreatAction.LogOnly(
             threatLevel = ThreatLevel.LOW,
             confidence = 0.5f,
             summary = "Routine"
         )
 
-        router.route(testEvent)
+        router.route(testEvent, dismisser)
 
         coVerify { eventRepository.insert(any()) }
+        verify { dismisser.dismiss(testEvent.sbnKey) }
     }
 
     @Test
-    fun `route sends notification for Notify action on ACTIVE camera`() = runTest {
+    fun `route ACTIVE MEDIUM dismisses Tapo notification`() = runTest {
+        coEvery { classifier.classify(any()) } returns ThreatAction.LogOnly(
+            threatLevel = ThreatLevel.MEDIUM,
+            confidence = 0.6f,
+            summary = "Caution"
+        )
+
+        router.route(testEvent, dismisser)
+
+        verify { dismisser.dismiss(testEvent.sbnKey) }
+    }
+
+    @Test
+    fun `route ACTIVE HIGH does not dismiss Tapo notification`() = runTest {
         coEvery { classifier.classify(any()) } returns ThreatAction.Notify(
             threatLevel = ThreatLevel.HIGH,
             confidence = 0.8f,
@@ -96,13 +115,14 @@ class ThreatRouterTest {
             title = "HIGH: Person detected"
         )
 
-        router.route(testEvent)
+        router.route(testEvent, dismisser)
 
+        verify(exactly = 0) { dismisser.dismiss(any()) }
         verify { notificationManager.postSecurityAlert(any(), any()) }
     }
 
     @Test
-    fun `route triggers critical alarm for CriticalAlarm action`() = runTest {
+    fun `route ACTIVE CRITICAL does not dismiss Tapo notification`() = runTest {
         coEvery { classifier.classify(any()) } returns ThreatAction.CriticalAlarm(
             threatLevel = ThreatLevel.CRITICAL,
             confidence = 0.95f,
@@ -111,13 +131,14 @@ class ThreatRouterTest {
             cameraName = "Front Door"
         )
 
-        router.route(testEvent)
+        router.route(testEvent, dismisser)
 
+        verify(exactly = 0) { dismisser.dismiss(any()) }
         verify { criticalAlarmManager.triggerCriticalAlarm(any()) }
     }
 
     @Test
-    fun `route does not alert for SILENT camera`() = runTest {
+    fun `route SILENT dismisses for HIGH threat`() = runTest {
         val silentCamera = activeCamera.copy(mode = CameraMode.SILENT)
         coEvery { cameraConfigRepository.getByName("Front Door") } returns Result.Success(silentCamera)
         coEvery { classifier.classify(any()) } returns ThreatAction.Notify(
@@ -127,10 +148,21 @@ class ThreatRouterTest {
             title = "Alert"
         )
 
-        router.route(testEvent)
+        router.route(testEvent, dismisser)
 
         coVerify { eventRepository.insert(any()) }
+        verify { dismisser.dismiss(testEvent.sbnKey) }
         verify(exactly = 0) { notificationManager.postSecurityAlert(any(), any()) }
+    }
+
+    @Test
+    fun `route Drop action dismisses without persisting`() = runTest {
+        coEvery { classifier.classify(any()) } returns ThreatAction.Drop(reason = "Duplicate")
+
+        router.route(testEvent, dismisser)
+
+        verify { dismisser.dismiss(testEvent.sbnKey) }
+        coVerify(exactly = 0) { eventRepository.insert(any()) }
     }
 
     @Test
@@ -143,10 +175,34 @@ class ThreatRouterTest {
             summary = "Activity"
         )
 
-        val newEvent = testEvent.copy(cameraName = "New Camera")
-        router.route(newEvent)
+        val newEvent = testEvent.copy(cameraName = "New Camera", sbnKey = "k2")
+        router.route(newEvent, dismisser)
 
         coVerify { cameraConfigRepository.insert(any()) }
+    }
+
+    @Test
+    fun `route uses fallback when classify throws`() = runTest {
+        coEvery { classifier.classify(any()) } throws RuntimeException("mlc")
+
+        router.route(testEvent, dismisser)
+
+        coVerify { eventRepository.insert(any()) }
+        verify { dismisser.dismiss(testEvent.sbnKey) }
+    }
+
+    @Test
+    fun `route still dismisses Tapo when persist fails for LOW`() = runTest {
+        coEvery { classifier.classify(any()) } returns ThreatAction.LogOnly(
+            threatLevel = ThreatLevel.LOW,
+            confidence = 0.5f,
+            summary = "Routine"
+        )
+        coEvery { eventRepository.insert(any()) } returns Result.Error("db")
+
+        router.route(testEvent, dismisser)
+
+        verify { dismisser.dismiss(testEvent.sbnKey) }
     }
 
     @Test
@@ -157,17 +213,8 @@ class ThreatRouterTest {
             summary = "Activity"
         )
 
-        router.route(testEvent)
+        router.route(testEvent, dismisser)
 
         coVerify { cameraConfigRepository.updateLastSeen("Front Door", testEvent.timestamp) }
-    }
-
-    @Test
-    fun `route skips Drop action without persisting`() = runTest {
-        coEvery { classifier.classify(any()) } returns ThreatAction.Drop(reason = "Duplicate")
-
-        router.route(testEvent)
-
-        coVerify(exactly = 0) { eventRepository.insert(any()) }
     }
 }

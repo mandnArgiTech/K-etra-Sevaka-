@@ -41,4 +41,17 @@ class ThreatLevelTest {
         assertEquals(ThreatLevel.LOW, ThreatLevel.fromString(""))
         assertEquals(ThreatLevel.LOW, ThreatLevel.fromString("invalid"))
     }
+
+    @Test
+    fun `elevate steps LOW to MEDIUM to HIGH to CRITICAL`() {
+        assertEquals(ThreatLevel.MEDIUM, ThreatLevel.LOW.elevate())
+        assertEquals(ThreatLevel.HIGH, ThreatLevel.MEDIUM.elevate())
+        assertEquals(ThreatLevel.CRITICAL, ThreatLevel.HIGH.elevate())
+        assertEquals(ThreatLevel.CRITICAL, ThreatLevel.CRITICAL.elevate())
+    }
+
+    @Test
+    fun `elevate NONE becomes LOW`() {
+        assertEquals(ThreatLevel.LOW, ThreatLevel.NONE.elevate())
+    }
 }

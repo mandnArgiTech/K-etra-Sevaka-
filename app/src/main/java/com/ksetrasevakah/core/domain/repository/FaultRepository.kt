@@ -8,5 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface FaultRepository {
     suspend fun getFaultDistribution(days: Int): Result<List<FaultCount>>
     fun observeRecent(days: Int): Flow<Result<List<FaultEntity>>>
+
+    suspend fun getRecentSince(since: Long): Result<List<FaultEntity>>
     suspend fun insert(entity: FaultEntity): Result<Long>
 }

@@ -48,13 +48,16 @@ interface SecurityEventDao {
         "SELECT COUNT(*) FROM security_events WHERE threat_level IN ('HIGH', 'CRITICAL') " +
             "AND acknowledged = 0"
     )
-    suspend fun getUnacknowledgedHighCount(): Int
+    fun getUnacknowledgedHighCount(): Flow<Int>
 
     @Query(
         "SELECT * FROM security_events WHERE origin_timestamp >= :since " +
             "ORDER BY origin_timestamp DESC"
     )
     suspend fun getRecentEventsList(since: Long): List<SecurityEventEntity>
+
+    @Query("SELECT * FROM security_events ORDER BY origin_timestamp DESC LIMIT 1")
+    suspend fun getLatest(): SecurityEventEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: SecurityEventEntity): Long

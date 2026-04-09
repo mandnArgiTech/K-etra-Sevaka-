@@ -21,7 +21,7 @@ import com.ksetrasevakah.core.database.entity.*
         CameraConfigEntity::class,
         SecurityBriefingEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
