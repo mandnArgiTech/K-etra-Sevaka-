@@ -3,10 +3,12 @@ package com.ksetrasevakah.designsystem.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val KsetraDarkColorScheme = darkColorScheme(
     primary = KsetraAccentGreen,
-    onPrimary = KsetraDarkBackground,
+    /** Near-black for strong contrast on bright primary buttons */
+    onPrimary = Color(0xFF030A06),
     primaryContainer = KsetraAccentGreenDim,
     onPrimaryContainer = KsetraTextPrimary,
     secondary = KsetraPurple,

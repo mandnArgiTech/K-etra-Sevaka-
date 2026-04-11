@@ -26,7 +26,6 @@ class ModelManagerTest {
     private lateinit var testScope: TestScope
     private lateinit var modelManager: ModelManager
 
-    private val ingestionState = MutableStateFlow(ModelState.UNLOADED)
     private val orchestratorState = MutableStateFlow(ModelState.UNLOADED)
 
     @BeforeEach
@@ -37,7 +36,6 @@ class ModelManagerTest {
         every { Log.e(any(), any(), any()) } returns 0
 
         engine = mockk(relaxed = true)
-        every { engine.observeModelState(Constants.INGESTION_MODEL_ID) } returns ingestionState
         every { engine.observeModelState(Constants.ORCHESTRATOR_MODEL_ID) } returns orchestratorState
         testScope = TestScope()
         modelManager = ModelManager(engine, testScope)
@@ -46,24 +44,6 @@ class ModelManagerTest {
     @AfterEach
     fun teardown() {
         unmockkStatic(Log::class)
-    }
-
-    @Test
-    fun `loadIngestionModel calls engine loadModel`() = testScope.runTest {
-        modelManager.loadIngestionModel()
-        advanceUntilIdle()
-
-        coVerify { engine.loadModel(Constants.INGESTION_MODEL_ID) }
-    }
-
-    @Test
-    fun `loadIngestionModel skips if already READY`() = testScope.runTest {
-        ingestionState.value = ModelState.READY
-
-        modelManager.loadIngestionModel()
-        advanceUntilIdle()
-
-        coVerify(exactly = 0) { engine.loadModel(Constants.INGESTION_MODEL_ID) }
     }
 
     @Test

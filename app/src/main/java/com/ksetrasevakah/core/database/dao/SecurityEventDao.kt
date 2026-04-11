@@ -64,4 +64,7 @@ interface SecurityEventDao {
 
     @Query("UPDATE security_events SET acknowledged = 1 WHERE id = :eventId")
     suspend fun acknowledge(eventId: Long)
+
+    @Query("SELECT COUNT(*) FROM security_events")
+    suspend fun count(): Long
 }

@@ -18,7 +18,7 @@ import org.junit.jupiter.api.assertThrows
 @OptIn(ExperimentalCoroutinesApi::class)
 class MlcLlmEngineTest {
 
-    private lateinit var engine: DefaultMlcLlmEngine
+    private lateinit var engine: StubMlcLlmEngine
 
     @BeforeEach
     fun setup() {
@@ -26,7 +26,7 @@ class MlcLlmEngineTest {
         every { Log.d(any(), any()) } returns 0
         every { Log.e(any(), any()) } returns 0
         every { Log.e(any(), any(), any()) } returns 0
-        engine = DefaultMlcLlmEngine()
+        engine = StubMlcLlmEngine()
     }
 
     @AfterEach

@@ -3,8 +3,8 @@ package com.ksetrasevakah.core.vectorstore
 import com.ksetrasevakah.core.common.Constants
 import com.ksetrasevakah.core.common.Result
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,6 +23,8 @@ class RagPipelineTest {
     fun setup() {
         embeddingGenerator = mockk()
         vectorStoreManager = mockk(relaxed = true)
+        coEvery { vectorStoreManager.addDocument(any(), any(), any()) } returns Unit
+        coEvery { vectorStoreManager.search(any(), any(), any()) } returns emptyList()
         pipeline = RagPipeline(embeddingGenerator, vectorStoreManager)
     }
 
@@ -34,7 +36,7 @@ class RagPipelineTest {
         val result = pipeline.ingest("test doc")
 
         assertTrue(result is Result.Success)
-        verify { vectorStoreManager.addDocument("test doc", embedding, emptyMap()) }
+        coVerify { vectorStoreManager.addDocument("test doc", embedding, emptyMap()) }
     }
 
     @Test

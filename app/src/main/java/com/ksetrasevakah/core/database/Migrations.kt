@@ -78,3 +78,25 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         // No-op: acknowledged remains INTEGER 0/1
     }
 }
+
+/**
+ * RAG vector document persistence.
+ */
+val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `vector_documents` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `text` TEXT NOT NULL,
+                `embedding` BLOB NOT NULL,
+                `metadataJson` TEXT NOT NULL,
+                `createdAt` INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+        db.execSQL(
+            "CREATE INDEX IF NOT EXISTS `index_vector_documents_createdAt` ON `vector_documents` (`createdAt`)"
+        )
+    }
+}

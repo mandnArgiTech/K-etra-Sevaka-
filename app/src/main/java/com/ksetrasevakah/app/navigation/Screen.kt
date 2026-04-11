@@ -7,6 +7,8 @@ sealed class Screen(val route: String) {
         fun createRoute(initialQuery: String? = null) = "chat/${initialQuery ?: ""}"
     }
     data object Settings : Screen("settings")
+    data object DataDiagnostics : Screen("data_diagnostics")
+    data object ConnectivityCheck : Screen("connectivity_check")
     data object SurakshaDashboard : Screen("suraksha_dashboard")
     data object CameraMatrix : Screen("camera_matrix")
 }

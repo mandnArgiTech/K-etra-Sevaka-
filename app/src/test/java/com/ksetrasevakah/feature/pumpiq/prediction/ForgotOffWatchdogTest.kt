@@ -1,6 +1,7 @@
 package com.ksetrasevakah.feature.pumpiq.prediction
 
 import com.ksetrasevakah.core.common.Result
+import com.ksetrasevakah.core.data.preferences.AppPreferencesRepository
 import com.ksetrasevakah.core.domain.repository.MotorStateRepository
 import com.ksetrasevakah.core.domain.repository.WorkerActivityRepository
 import io.mockk.coEvery
@@ -16,13 +17,27 @@ class ForgotOffWatchdogTest {
 
     private lateinit var motorStateRepository: MotorStateRepository
     private lateinit var workerActivityRepository: WorkerActivityRepository
+    private lateinit var appPreferences: AppPreferencesRepository
     private lateinit var watchdog: ForgotOffWatchdog
 
     @BeforeEach
     fun setup() {
         motorStateRepository = mockk(relaxed = true)
         workerActivityRepository = mockk(relaxed = true)
-        watchdog = ForgotOffWatchdog(motorStateRepository, workerActivityRepository)
+        appPreferences = mockk(relaxed = true)
+        coEvery { appPreferences.isWatchdogEnabled() } returns true
+        watchdog = ForgotOffWatchdog(motorStateRepository, workerActivityRepository, appPreferences)
+    }
+
+    @Test
+    fun `returns null when watchdog disabled`() = runTest {
+        coEvery { appPreferences.isWatchdogEnabled() } returns false
+        coEvery { motorStateRepository.getSessionDuration() } returns Result.Success(999L * 60_000L)
+        coEvery { workerActivityRepository.getAvgOnTime(any()) } returns Result.Success(60L * 60_000L)
+
+        val result = watchdog.check()
+
+        assertNull(result)
     }
 
     @Test

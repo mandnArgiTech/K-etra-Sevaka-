@@ -1,23 +1,57 @@
 package com.ksetrasevakah.core.vectorstore
 
 import com.ksetrasevakah.core.common.Constants
+import com.ksetrasevakah.core.database.dao.VectorDocumentDao
+import com.ksetrasevakah.core.database.entity.VectorDocumentEntity
 import com.ksetrasevakah.core.vectorstore.model.VectorSearchResult
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import kotlin.math.sqrt
 
-class VectorStoreManager @Inject constructor() {
+class VectorStoreManager @Inject constructor(
+    private val vectorDocumentDao: VectorDocumentDao
+) {
 
     private val documents = mutableListOf<StoredDocument>()
+    private val loadMutex = Mutex()
+    private var loaded = false
 
-    fun addDocument(text: String, embedding: FloatArray, metadata: Map<String, String> = emptyMap()) {
+    suspend fun ensureLoaded() {
+        loadMutex.withLock {
+            if (loaded) return
+            vectorDocumentDao.getAll().forEach { entity ->
+                documents.add(
+                    StoredDocument(
+                        text = entity.text,
+                        embedding = entity.embedding.toFloatArrayLittleEndian(),
+                        metadata = jsonToMetadataMap(entity.metadataJson)
+                    )
+                )
+            }
+            loaded = true
+        }
+    }
+
+    suspend fun addDocument(text: String, embedding: FloatArray, metadata: Map<String, String> = emptyMap()) {
+        ensureLoaded()
+        val json = metadataToJson(metadata)
+        vectorDocumentDao.insert(
+            VectorDocumentEntity(
+                text = text,
+                embedding = embedding.toLittleEndianByteArray(),
+                metadataJson = json
+            )
+        )
         documents.add(StoredDocument(text, embedding, metadata))
     }
 
-    fun search(
+    suspend fun search(
         queryEmbedding: FloatArray,
         topK: Int = Constants.VECTOR_SEARCH_TOP_K,
         namespaces: Set<String>? = null
     ): List<VectorSearchResult> {
+        ensureLoaded()
         if (documents.isEmpty()) return emptyList()
 
         val pool = if (namespaces.isNullOrEmpty()) {
@@ -41,11 +75,18 @@ class VectorStoreManager @Inject constructor() {
             .take(topK)
     }
 
-    fun clear() {
-        documents.clear()
+    suspend fun clear() {
+        loadMutex.withLock {
+            vectorDocumentDao.deleteAll()
+            documents.clear()
+            loaded = true
+        }
     }
 
-    fun size(): Int = documents.size
+    suspend fun size(): Int {
+        ensureLoaded()
+        return documents.size
+    }
 
     internal fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
         require(a.size == b.size) { "Vectors must have the same dimension" }

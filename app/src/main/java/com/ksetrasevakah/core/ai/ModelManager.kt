@@ -16,21 +16,6 @@ class ModelManager @Inject constructor(
 
     private var orchestratorIdleJob: Job? = null
 
-    fun loadIngestionModel() {
-        val modelId = Constants.INGESTION_MODEL_ID
-        scope.launch {
-            val state = engine.observeModelState(modelId).value
-            if (state != ModelState.READY && state != ModelState.LOADING) {
-                try {
-                    engine.loadModel(modelId)
-                    Log.d(TAG, "Ingestion model loaded")
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to load ingestion model", e)
-                }
-            }
-        }
-    }
-
     fun loadOrchestratorModel() {
         val modelId = Constants.ORCHESTRATOR_MODEL_ID
         orchestratorIdleJob?.cancel()

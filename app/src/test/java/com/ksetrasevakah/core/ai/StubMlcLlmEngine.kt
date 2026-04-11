@@ -1,6 +1,5 @@
 package com.ksetrasevakah.core.ai
 
-import android.util.Log
 import com.ksetrasevakah.core.ai.model.ModelState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -10,9 +9,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import javax.inject.Inject
 
-class DefaultMlcLlmEngine @Inject constructor() : MlcLlmEngine {
+/**
+ * JVM-friendly stub for unit tests (no native llama.cpp).
+ */
+class StubMlcLlmEngine : MlcLlmEngine {
 
     private val stateFlows = mutableMapOf<String, MutableStateFlow<ModelState>>()
     private val mutex = Mutex()
@@ -25,22 +26,14 @@ class DefaultMlcLlmEngine @Inject constructor() : MlcLlmEngine {
             val stateFlow = getOrCreateStateFlow(modelId)
             if (stateFlow.value == ModelState.READY) return
             stateFlow.value = ModelState.LOADING
-            try {
-                delay(SIMULATED_LOAD_MS)
-                stateFlow.value = ModelState.READY
-                Log.d(TAG, "Model $modelId loaded (stub)")
-            } catch (e: Exception) {
-                stateFlow.value = ModelState.ERROR
-                throw e
-            }
+            delay(SIMULATED_LOAD_MS)
+            stateFlow.value = ModelState.READY
         }
     }
 
     override suspend fun unloadModel(modelId: String) {
         mutex.withLock {
-            val stateFlow = getOrCreateStateFlow(modelId)
-            stateFlow.value = ModelState.UNLOADED
-            Log.d(TAG, "Model $modelId unloaded (stub)")
+            getOrCreateStateFlow(modelId).value = ModelState.UNLOADED
         }
     }
 
@@ -74,7 +67,6 @@ class DefaultMlcLlmEngine @Inject constructor() : MlcLlmEngine {
     }
 
     companion object {
-        private const val TAG = "DefaultMlcLlmEngine"
         internal const val SIMULATED_LOAD_MS = 500L
         internal const val SIMULATED_TOKEN_DELAY_MS = 10L
     }

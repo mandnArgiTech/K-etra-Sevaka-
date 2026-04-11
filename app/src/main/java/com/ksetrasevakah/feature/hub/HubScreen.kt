@@ -54,6 +54,9 @@ fun HubScreen(
     onNavigateToDashboard: () -> Unit,
     onNavigateToSuraksha: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToBackup: () -> Unit = onNavigateToSettings,
+    onNavigateToDataDiagnostics: () -> Unit = {},
+    onNavigateToConnectivity: () -> Unit = {},
     viewModel: HubViewModel = hiltViewModel()
 ) {
     val hubState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,6 +64,9 @@ fun HubScreen(
         onNavigateToDashboard = onNavigateToDashboard,
         onNavigateToSuraksha = onNavigateToSuraksha,
         onNavigateToSettings = onNavigateToSettings,
+        onNavigateToBackup = onNavigateToBackup,
+        onNavigateToDataDiagnostics = onNavigateToDataDiagnostics,
+        onNavigateToConnectivity = onNavigateToConnectivity,
         surakshaUnacknowledgedAlerts = hubState.unacknowledgedHighAlerts
     )
 }
@@ -70,6 +76,9 @@ private fun HubContent(
     onNavigateToDashboard: () -> Unit,
     onNavigateToSuraksha: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToBackup: () -> Unit,
+    onNavigateToDataDiagnostics: () -> Unit,
+    onNavigateToConnectivity: () -> Unit,
     surakshaUnacknowledgedAlerts: Int = 0
 ) {
     Box(
@@ -148,7 +157,23 @@ private fun HubContent(
             SystemRow(
                 title = "Backup",
                 subtitle = "Google Drive sync",
-                onClick = {}
+                onClick = onNavigateToBackup
+            )
+
+            Spacer(modifier = Modifier.height(KsetraSpacing.sm))
+
+            SystemRow(
+                title = "Data & ingestion",
+                subtitle = "SMS rows, RAG chunks, SQLite overview",
+                onClick = onNavigateToDataDiagnostics
+            )
+
+            Spacer(modifier = Modifier.height(KsetraSpacing.sm))
+
+            SystemRow(
+                title = "Connectivity check",
+                subtitle = "Test SMS access, pick panel number, Tapo listener",
+                onClick = onNavigateToConnectivity
             )
 
             Spacer(modifier = Modifier.height(KsetraSpacing.sm))
@@ -298,7 +323,10 @@ private fun HubScreenPreview() {
         HubContent(
             onNavigateToDashboard = {},
             onNavigateToSuraksha = {},
-            onNavigateToSettings = {}
+            onNavigateToSettings = {},
+            onNavigateToBackup = {},
+            onNavigateToDataDiagnostics = {},
+            onNavigateToConnectivity = {}
         )
     }
 }

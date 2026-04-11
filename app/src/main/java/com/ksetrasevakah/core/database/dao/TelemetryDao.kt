@@ -20,4 +20,16 @@ interface TelemetryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: TelemetryEntity): Long
+
+    @Query("SELECT COUNT(*) FROM telemetry_log")
+    suspend fun count(): Long
+
+    @Query("SELECT MAX(timestamp) FROM telemetry_log")
+    suspend fun maxTimestamp(): Long?
+
+    @Query("SELECT MIN(timestamp) FROM telemetry_log")
+    suspend fun minTimestamp(): Long?
+
+    @Query("SELECT * FROM telemetry_log ORDER BY timestamp DESC LIMIT :limit")
+    suspend fun getRecentPreview(limit: Int): List<TelemetryEntity>
 }

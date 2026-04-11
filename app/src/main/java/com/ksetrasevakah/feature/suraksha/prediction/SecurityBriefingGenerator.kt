@@ -32,7 +32,7 @@ class SecurityBriefingGenerator @Inject constructor(
             }
 
             val prompt = SecurityBriefingPrompt.getBriefingPrompt(events, counts)
-            val briefing = engine.generate(prompt, Constants.INGESTION_MODEL_ID)
+            val briefing = engine.generate(prompt, Constants.ORCHESTRATOR_MODEL_ID)
                 .fold(StringBuilder()) { acc, token -> acc.append(token) }
                 .toString()
                 .trim()

@@ -4,6 +4,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import com.ksetrasevakah.core.common.Constants
+import com.ksetrasevakah.core.data.preferences.AppPreferencesRepository
 import com.ksetrasevakah.core.notification.model.TapoEvent
 import com.ksetrasevakah.feature.suraksha.prediction.ThreatRouter
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,8 +19,23 @@ import javax.inject.Inject
 class TapoNotificationListener : NotificationListenerService(), NotificationDismisser {
 
     @Inject lateinit var threatRouter: ThreatRouter
+    @Inject lateinit var appPreferences: AppPreferencesRepository
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /** Cached package name — updated whenever the preference changes. */
+    @Volatile
+    private var watchedPackage: String = Constants.TAPO_PACKAGE_NAME
+
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+        scope.launch {
+            appPreferences.tapoPackageName.collect { pkg ->
+                watchedPackage = pkg
+                Log.d(TAG, "Watching notifications from: $pkg")
+            }
+        }
+    }
 
     override fun dismiss(sbnKey: String) {
         if (sbnKey.isBlank()) return
@@ -32,7 +48,7 @@ class TapoNotificationListener : NotificationListenerService(), NotificationDism
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         sbn ?: return
-        if (sbn.packageName != Constants.TAPO_PACKAGE_NAME) return
+        if (sbn.packageName != watchedPackage) return
 
         val notification = sbn.notification ?: return
         val extras = notification.extras ?: return

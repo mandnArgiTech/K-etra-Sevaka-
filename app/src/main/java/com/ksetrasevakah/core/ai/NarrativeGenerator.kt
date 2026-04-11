@@ -14,7 +14,7 @@ class NarrativeGenerator @Inject constructor(
     suspend fun generate(telemetry: TelemetryEntity): Result<String> {
         return try {
             val prompt = NarrativePrompt.getNarrativePrompt(telemetry)
-            val narrative = engine.generate(prompt, Constants.INGESTION_MODEL_ID)
+            val narrative = engine.generate(prompt, Constants.ORCHESTRATOR_MODEL_ID)
                 .fold(StringBuilder()) { acc, token -> acc.append(token) }
                 .toString()
                 .trim()

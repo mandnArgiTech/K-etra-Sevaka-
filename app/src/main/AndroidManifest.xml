@@ -20,6 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KsetraSevakah"
         tools:targetApi="35">
+        <!-- LiteRT-LM GPU backend: OpenCL on Adreno (Snapdragon).
+             Both are optional so the app launches on devices without these libraries;
+             LiteRT-LM falls back to CPU automatically when they are absent. -->
+        <uses-native-library android:name="libvndksupport.so" android:required="false"/>
+        <uses-native-library android:name="libOpenCL.so"      android:required="false"/>
+
         <activity
             android:name=".app.MainActivity"
             android:exported="true"
@@ -61,5 +67,16 @@
             android:name=".core.ai.IngestionService"
             android:foregroundServiceType="dataSync"
             android:exported="false" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 </manifest>

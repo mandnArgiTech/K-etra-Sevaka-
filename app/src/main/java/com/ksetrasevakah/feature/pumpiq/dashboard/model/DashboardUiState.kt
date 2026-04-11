@@ -18,7 +18,14 @@ data class DashboardUiState(
     val sessionStartTime: Long? = null,
     val predictions: PredictionsUiState = PredictionsUiState(),
     val dailySummary: String = "",
-    val activeChart: ChartTab = ChartTab.PHASE
+    val activeChart: ChartTab = ChartTab.PHASE,
+    val phaseSeriesR: List<Float> = emptyList(),
+    val phaseSeriesY: List<Float> = emptyList(),
+    val phaseSeriesB: List<Float> = emptyList(),
+    val gridReliabilityRows: List<GridReliabilityRow> = emptyList(),
+    /** Label to hours for fault pie chart */
+    val faultDistribution: List<Pair<String, Float>> = emptyList(),
+    val powerVoltageHistory: List<Float> = emptyList()
 )
 
 data class PredictionsUiState(

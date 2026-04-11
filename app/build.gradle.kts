@@ -1,3 +1,60 @@
+import java.util.Properties
+
+/**
+ * Hugging Face read token for gated models (e.g. Gemma), baked into BuildConfig.
+ * Precedence: repo-root `local.properties` key `HUGGINGFACE_READ_TOKEN`, then repo-root `.env`.
+ *
+ * `.env` supports:
+ * - `HUGGINGFACE_READ_TOKEN=hf_…` or `HF_TOKEN=hf_…` (optional quotes)
+ * - a single bare line `hf_…` (entire file)
+ */
+val huggingFaceReadToken: String = run {
+    val lp = rootProject.file("local.properties")
+    val fromLocal = if (lp.exists()) {
+        Properties().apply { lp.inputStream().use { load(it) } }
+            .getProperty("HUGGINGFACE_READ_TOKEN", "")
+            .trim()
+    } else {
+        ""
+    }
+    if (fromLocal.isNotEmpty()) return@run fromLocal
+
+    val envFile = rootProject.file(".env")
+    if (!envFile.exists()) return@run ""
+
+    val lines = envFile.readLines()
+    for (line in lines) {
+        val t = line.trim()
+        if (t.isEmpty() || t.startsWith("#")) continue
+        val m = Regex("""^(?:export\s+)?(?:HUGGINGFACE_READ_TOKEN|HF_TOKEN)\s*=\s*(.+)$""").find(t)
+            ?: continue
+        var v = m.groupValues[1].trim()
+        if (v.length >= 2) {
+            if (v.startsWith("\"") && v.endsWith("\"")) v = v.substring(1, v.length - 1)
+            if (v.startsWith("'") && v.endsWith("'")) v = v.substring(1, v.length - 1)
+        }
+        if (v.isNotEmpty()) return@run v.trim()
+    }
+
+    val firstMeaningful = lines.map { it.trim() }.firstOrNull { it.isNotEmpty() && !it.startsWith("#") }
+        ?: ""
+    if (firstMeaningful.startsWith("hf_") && !firstMeaningful.contains("=")) {
+        return@run firstMeaningful
+    }
+
+    val whole = envFile.readText().trim()
+    if (whole.startsWith("hf_") && !whole.contains("=")) return@run whole
+
+    ""
+}
+
+configurations.configureEach {
+    resolutionStrategy {
+        force("androidx.core:core-ktx:1.15.0")
+        force("androidx.core:core:1.15.0")
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -21,6 +78,11 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val escapedHfToken = huggingFaceReadToken
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+        buildConfigField("String", "HUGGINGFACE_READ_TOKEN", "\"$escapedHfToken\"")
     }
 
     buildTypes {
@@ -48,6 +110,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -55,6 +118,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/LICENSE*"
             excludes += "/META-INF/NOTICE*"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/DEPENDENCIES"
         }
     }
 
@@ -125,10 +190,21 @@ dependencies {
     // Core
     implementation(libs.activity.compose)
     implementation(libs.core.ktx)
+    implementation(libs.core.splashscreen)
+    implementation(libs.accompanist.permissions)
+    implementation(libs.play.services.auth)
+    implementation(libs.google.api.client.android)
+    implementation(libs.google.api.services.drive)
+    implementation(libs.datastore.preferences)
 
     // Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
+
+    // On-device LLM (LiteRT-LM, GPU via OpenCL/Adreno) + model download
+    implementation(libs.litertlm.android)
+    implementation(libs.okhttp)
+    implementation(libs.onnxruntime.android)
 
     // Unit Testing
     testImplementation(libs.junit5.api)

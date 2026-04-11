@@ -29,8 +29,8 @@ Requires `ANDROID_HOME=/opt/android-sdk` (SDK 35 + build-tools 35.0.0). JDK 17+ 
 
 ### Key caveats
 
-- No Android emulator — instrumented tests (`connectedAndroidTest`) cannot run in Cloud. Unit tests are comprehensive (217 tests).
-- MLC-LLM engine is stubbed (`DefaultMlcLlmEngine`) since the real SDK requires a physical Snapdragon device.
-- Google Drive API client is stubbed (`DriveApiClient` interface) — requires OAuth2 credentials for real usage.
+- No Android emulator — instrumented tests (`connectedAndroidTest`) cannot run in Cloud. Unit tests are comprehensive.
+- On-device LLM uses **LiteRT-LM** (`litertlm-android 0.9.0`, `.litertlm` format under `filesDir/models/`). `Backend.GPU()` routes through OpenCL on Adreno (Snapdragon 8s Gen 3). First-run download is large; Cloud builds do not run inference. SMS ingestion uses a fast regex parser (`RegexSmsParser`) — no ingestion model is downloaded.
+- **Google Drive backup** needs a GCP project, Drive API enabled, and an Android OAuth client ID (package + SHA-1) for sign-in and uploads to work on a real device.
 - ESLint on prototype has 1 pre-existing warning (`react-hooks/exhaustive-deps`).
-- No external services, Docker, API keys, or secrets required for building and unit testing.
+- No Docker or server-side secrets required for **building** and **unit tests**; model URLs hit the public internet only when downloading assets on device.

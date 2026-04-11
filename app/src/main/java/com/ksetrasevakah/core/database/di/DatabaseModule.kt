@@ -6,6 +6,7 @@ import com.ksetrasevakah.core.common.Constants
 import com.ksetrasevakah.core.database.KsetraDatabase
 import com.ksetrasevakah.core.database.MIGRATION_1_2
 import com.ksetrasevakah.core.database.MIGRATION_2_3
+import com.ksetrasevakah.core.database.MIGRATION_3_4
 import com.ksetrasevakah.core.database.dao.*
 import dagger.Module
 import dagger.Provides
@@ -21,7 +22,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): KsetraDatabase =
         Room.databaseBuilder(context, KsetraDatabase::class.java, Constants.DB_NAME)
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .build()
 
     @Provides fun provideMotorStateDao(db: KsetraDatabase): MotorStateDao = db.motorStateDao()
@@ -35,4 +36,5 @@ object DatabaseModule {
     @Provides fun provideSecurityEventDao(db: KsetraDatabase): SecurityEventDao = db.securityEventDao()
     @Provides fun provideCameraConfigDao(db: KsetraDatabase): CameraConfigDao = db.cameraConfigDao()
     @Provides fun provideSecurityBriefingDao(db: KsetraDatabase): SecurityBriefingDao = db.securityBriefingDao()
+    @Provides fun provideVectorDocumentDao(db: KsetraDatabase): VectorDocumentDao = db.vectorDocumentDao()
 }

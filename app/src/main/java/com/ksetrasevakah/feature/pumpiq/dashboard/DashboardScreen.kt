@@ -47,6 +47,10 @@ import com.ksetrasevakah.designsystem.theme.KsetraSpacing
 import com.ksetrasevakah.designsystem.theme.KsetraTextPrimary
 import com.ksetrasevakah.designsystem.theme.KsetraTextSecondary
 import com.ksetrasevakah.designsystem.theme.KsetraTheme
+import com.ksetrasevakah.designsystem.theme.KsetraAmber
+import com.ksetrasevakah.designsystem.theme.KsetraBlue
+import com.ksetrasevakah.designsystem.theme.KsetraPurple
+import com.ksetrasevakah.designsystem.theme.KsetraRed
 import com.ksetrasevakah.feature.pumpiq.dashboard.component.ChartTabBar
 import com.ksetrasevakah.feature.pumpiq.dashboard.component.FaultDistributionChart
 import com.ksetrasevakah.feature.pumpiq.dashboard.component.FaultSlice
@@ -54,6 +58,9 @@ import com.ksetrasevakah.feature.pumpiq.dashboard.component.GridReliabilityChart
 import com.ksetrasevakah.feature.pumpiq.dashboard.component.GridReliabilityEntry
 import com.ksetrasevakah.feature.pumpiq.dashboard.component.MotorControlCard
 import com.ksetrasevakah.feature.pumpiq.dashboard.component.PhaseCurrentChart
+import com.ksetrasevakah.feature.pumpiq.dashboard.component.PowerForecastChart
+import com.ksetrasevakah.feature.pumpiq.dashboard.component.PowerForecastPoint
+import com.ksetrasevakah.feature.pumpiq.dashboard.component.PredictionCardsSection
 import com.ksetrasevakah.feature.pumpiq.dashboard.model.ChartTab
 import com.ksetrasevakah.feature.pumpiq.dashboard.model.DashboardUiEvent
 import com.ksetrasevakah.feature.pumpiq.dashboard.model.DashboardUiState
@@ -149,11 +156,7 @@ private fun DashboardContent(
 
                 Spacer(modifier = Modifier.height(KsetraSpacing.xxl))
 
-                SectionHeader(text = "Predictions")
-
-                Spacer(modifier = Modifier.height(KsetraSpacing.md))
-
-                PredictionsPlaceholder()
+                PredictionCardsSection(state = state.predictions)
 
                 Spacer(modifier = Modifier.height(KsetraSpacing.xxl))
 
@@ -175,7 +178,7 @@ private fun DashboardContent(
 
                 Spacer(modifier = Modifier.height(KsetraSpacing.lg))
 
-                ChartArea(activeTab = state.activeChart)
+                ChartArea(state = state)
 
                 Spacer(modifier = Modifier.height(KsetraSpacing.xxxl))
             }
@@ -231,21 +234,6 @@ private fun DashboardHeader(
 }
 
 @Composable
-private fun PredictionsPlaceholder() {
-    KsetraCard(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "Prediction cards will appear here once sufficient data is collected.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = KsetraTextSecondary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(KsetraSpacing.lg)
-        )
-    }
-}
-
-@Composable
 private fun AiSummaryCard(summary: String) {
     KsetraCard(modifier = Modifier.fillMaxWidth()) {
         Column {
@@ -265,33 +253,100 @@ private fun AiSummaryCard(summary: String) {
 }
 
 @Composable
-private fun ChartArea(activeTab: ChartTab) {
+private fun ChartArea(state: DashboardUiState) {
+    val faultColors = listOf(KsetraRed, KsetraAmber, KsetraBlue, KsetraPurple, KsetraAccentGreen)
+    val gridEntries = state.gridReliabilityRows.map {
+        GridReliabilityEntry(it.label, it.uptimeHours, it.downtimeHours)
+    }
+    val faultSlices = state.faultDistribution.mapIndexed { index, pair ->
+        FaultSlice(
+            label = pair.first,
+            value = pair.second,
+            color = faultColors[index % faultColors.size]
+        )
+    }
+    val n = state.powerVoltageHistory.size
+    val actualPower = if (n > 0) {
+        state.powerVoltageHistory.mapIndexed { i, v ->
+            val offset = if (n > 1) i * 24f / (n - 1) else 0f
+            PowerForecastPoint(hourOffset = offset, voltage = v)
+        }
+    } else {
+        emptyList()
+    }
+    val vPred = state.voltage ?: 220f
+    val predictedPower = buildList {
+        state.predictions.powerFailureTime?.let { time ->
+            val hour = time.substringBefore(':').toIntOrNull()?.toFloat()
+            if (hour != null) {
+                add(PowerForecastPoint(hourOffset = hour, voltage = vPred))
+            }
+        }
+    }
+
     KsetraCard(modifier = Modifier.fillMaxWidth()) {
-        when (activeTab) {
+        when (state.activeChart) {
             ChartTab.PHASE -> {
                 PhaseCurrentChart(
-                    phaseRData = emptyList(),
-                    phaseYData = emptyList(),
-                    phaseBData = emptyList()
+                    phaseRData = state.phaseSeriesR,
+                    phaseYData = state.phaseSeriesY,
+                    phaseBData = state.phaseSeriesB
                 )
             }
             ChartTab.UPTIME -> {
-                GridReliabilityChart(entries = emptyList())
+                GridReliabilityChart(entries = gridEntries)
             }
             ChartTab.FAULTS -> {
-                FaultDistributionChart(slices = emptyList())
+                FaultDistributionChart(slices = faultSlices)
             }
-            ChartTab.WORKER, ChartTab.POWER -> {
-                Text(
-                    text = "Chart data will appear after collection.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = KsetraTextSecondary,
-                    textAlign = TextAlign.Center,
+            ChartTab.WORKER -> {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(180.dp)
                         .padding(KsetraSpacing.lg)
-                )
+                ) {
+                    Text(
+                        text = "Expected worker start",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = KsetraAccentGreen
+                    )
+                    Spacer(modifier = Modifier.height(KsetraSpacing.sm))
+                    Text(
+                        text = state.predictions.workerOnTime ?: "—",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = KsetraTextPrimary
+                    )
+                    Spacer(modifier = Modifier.height(KsetraSpacing.sm))
+                    Text(
+                        text = if (state.predictions.hasInsufficientData) {
+                            "Collect more worker activity to refine this estimate."
+                        } else {
+                            "Based on recent on-site patterns."
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = KsetraTextSecondary
+                    )
+                }
+            }
+            ChartTab.POWER -> {
+                if (actualPower.isEmpty() && predictedPower.isEmpty()) {
+                    Text(
+                        text = "Voltage history will appear as telemetry arrives.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = KsetraTextSecondary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .padding(KsetraSpacing.lg)
+                    )
+                } else {
+                    PowerForecastChart(
+                        actual = actualPower,
+                        predicted = predictedPower
+                    )
+                }
             }
         }
     }

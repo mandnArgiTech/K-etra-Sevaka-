@@ -26,4 +26,7 @@ interface WorkerActivityDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: WorkerActivityEntity)
+
+    @Query("SELECT COUNT(*) FROM worker_activity")
+    suspend fun count(): Long
 }

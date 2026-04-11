@@ -13,4 +13,7 @@ interface BackupLogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: BackupLogEntity): Long
+
+    @Query("SELECT COUNT(*) FROM backup_log")
+    suspend fun count(): Long
 }

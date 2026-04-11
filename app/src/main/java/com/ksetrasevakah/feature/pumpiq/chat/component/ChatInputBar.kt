@@ -1,5 +1,11 @@
 package com.ksetrasevakah.feature.pumpiq.chat.component
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.speech.RecognizerIntent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +46,18 @@ fun ChatInputBar(
 ) {
     var text by rememberSaveable { mutableStateOf("") }
 
+    val speechLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val matches = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spoken = matches?.firstOrNull()?.trim().orEmpty()
+            if (spoken.isNotEmpty()) {
+                text = if (text.isBlank()) spoken else "$text $spoken"
+            }
+        }
+    }
+
     Row(
         modifier = modifier
             .background(KsetraSurface)
@@ -49,9 +67,25 @@ fun ChatInputBar(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { /* Voice input placeholder */ }) {
+        IconButton(
+            onClick = {
+                val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                    putExtra(
+                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                    )
+                    putExtra(RecognizerIntent.EXTRA_PROMPT, "Ask PumpIQ")
+                }
+                try {
+                    speechLauncher.launch(intent)
+                } catch (_: ActivityNotFoundException) {
+                    // No speech recognition service on device
+                }
+            },
+            enabled = isEnabled
+        ) {
             Icon(
-                Icons.Filled.Call,
+                Icons.Filled.Mic,
                 contentDescription = "Voice input",
                 tint = KsetraTextSecondary
             )

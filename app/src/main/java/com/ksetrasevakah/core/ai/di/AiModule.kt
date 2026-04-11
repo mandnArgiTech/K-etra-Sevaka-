@@ -1,6 +1,6 @@
 package com.ksetrasevakah.core.ai.di
 
-import com.ksetrasevakah.core.ai.DefaultMlcLlmEngine
+import com.ksetrasevakah.core.ai.LiteRtLmEngine
 import com.ksetrasevakah.core.ai.MlcLlmEngine
 import com.ksetrasevakah.core.ai.ModelManager
 import dagger.Binds
@@ -19,7 +19,7 @@ abstract class AiModule {
 
     @Binds
     @Singleton
-    abstract fun bindMlcLlmEngine(impl: DefaultMlcLlmEngine): MlcLlmEngine
+    abstract fun bindMlcLlmEngine(impl: LiteRtLmEngine): MlcLlmEngine
 
     companion object {
         @Provides

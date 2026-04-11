@@ -29,4 +29,7 @@ interface FaultDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: FaultEntity): Long
+
+    @Query("SELECT COUNT(*) FROM fault_log")
+    suspend fun count(): Long
 }

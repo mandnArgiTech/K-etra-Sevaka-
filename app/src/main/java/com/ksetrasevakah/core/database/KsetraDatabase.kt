@@ -20,8 +20,9 @@ import com.ksetrasevakah.core.database.entity.*
         SecurityEventEntity::class,
         CameraConfigEntity::class,
         SecurityBriefingEntity::class,
+        VectorDocumentEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -37,4 +38,5 @@ abstract class KsetraDatabase : RoomDatabase() {
     abstract fun securityEventDao(): SecurityEventDao
     abstract fun cameraConfigDao(): CameraConfigDao
     abstract fun securityBriefingDao(): SecurityBriefingDao
+    abstract fun vectorDocumentDao(): VectorDocumentDao
 }

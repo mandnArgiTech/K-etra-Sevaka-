@@ -23,4 +23,7 @@ interface ChatMessageDao {
 
     @Query("DELETE FROM chat_messages WHERE thread_id = :threadId")
     suspend fun deleteForThread(threadId: Long)
+
+    @Query("SELECT COUNT(*) FROM chat_messages")
+    suspend fun count(): Long
 }

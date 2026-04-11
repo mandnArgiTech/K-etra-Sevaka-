@@ -7,26 +7,18 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import com.ksetrasevakah.core.ai.parser.TelemetryParser
-import com.ksetrasevakah.core.ai.prompt.IngestionPrompt
-import com.ksetrasevakah.core.common.Constants
-import com.ksetrasevakah.core.common.Result
-import com.ksetrasevakah.core.database.dao.TelemetryDao
-import com.ksetrasevakah.core.database.entity.TelemetryEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class IngestionService : Service() {
 
-    @Inject lateinit var engine: MlcLlmEngine
-    @Inject lateinit var telemetryDao: TelemetryDao
+    @Inject lateinit var smsTelemetryProcessor: SmsTelemetryProcessor
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -48,55 +40,11 @@ class IngestionService : Service() {
         }
 
         serviceScope.launch {
-            processSmsTelemetry(smsBody, smsTimestamp)
+            smsTelemetryProcessor.process(smsBody, smsTimestamp)
             stopSelf(startId)
         }
 
         return START_NOT_STICKY
-    }
-
-    private suspend fun processSmsTelemetry(smsBody: String, timestamp: Long) {
-        try {
-            val prompt = IngestionPrompt.getExtractionPrompt(smsBody)
-            val fullResponse = engine.generate(prompt, Constants.INGESTION_MODEL_ID)
-                .fold(StringBuilder()) { acc, token -> acc.append(token) }
-                .toString()
-
-            when (val parsed = TelemetryParser.parseResponse(fullResponse)) {
-                is Result.Success -> {
-                    val entity = TelemetryEntity(
-                        rawSms = smsBody,
-                        timestamp = timestamp,
-                        motorOn = parsed.data.motorOn,
-                        phaseR = parsed.data.phaseR,
-                        phaseY = parsed.data.phaseY,
-                        phaseB = parsed.data.phaseB,
-                        voltage = parsed.data.voltage,
-                        temperature = parsed.data.temperature,
-                        runtimeMinutes = parsed.data.runtimeMinutes
-                    )
-                    telemetryDao.insert(entity)
-                    Log.d(TAG, "Telemetry saved for SMS at $timestamp")
-                }
-                is Result.Error -> {
-                    Log.e(TAG, "Failed to parse model output: ${parsed.message}")
-                    saveFallbackEntity(smsBody, timestamp)
-                }
-                is Result.Loading -> Unit
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Ingestion failed", e)
-            saveFallbackEntity(smsBody, timestamp)
-        }
-    }
-
-    private suspend fun saveFallbackEntity(smsBody: String, timestamp: Long) {
-        val entity = TelemetryEntity(
-            rawSms = smsBody,
-            timestamp = timestamp,
-            motorOn = smsBody.uppercase().contains("MOTOR ON")
-        )
-        telemetryDao.insert(entity)
     }
 
     private fun createNotificationChannel() {

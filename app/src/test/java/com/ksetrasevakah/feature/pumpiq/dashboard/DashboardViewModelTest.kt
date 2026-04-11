@@ -3,6 +3,7 @@ package com.ksetrasevakah.feature.pumpiq.dashboard
 import app.cash.turbine.test
 import com.ksetrasevakah.core.common.Result
 import com.ksetrasevakah.core.database.entity.TelemetryEntity
+import com.ksetrasevakah.core.domain.repository.FaultRepository
 import com.ksetrasevakah.core.domain.repository.MotorStateRepository
 import com.ksetrasevakah.core.domain.repository.TelemetryRepository
 import com.ksetrasevakah.core.sms.model.SmsCommand
@@ -10,6 +11,12 @@ import com.ksetrasevakah.designsystem.model.MotorState
 import com.ksetrasevakah.feature.pumpiq.dashboard.model.ChartTab
 import com.ksetrasevakah.feature.pumpiq.dashboard.model.DashboardUiEvent
 import com.ksetrasevakah.feature.pumpiq.domain.usecase.SendSmsCommandUseCase
+import com.ksetrasevakah.feature.pumpiq.prediction.PredictionEngine
+import com.ksetrasevakah.feature.pumpiq.prediction.model.FaultPrediction
+import com.ksetrasevakah.feature.pumpiq.prediction.model.ForgotOffPrediction
+import com.ksetrasevakah.feature.pumpiq.prediction.model.PowerFailurePrediction
+import com.ksetrasevakah.feature.pumpiq.prediction.PredictionResult
+import com.ksetrasevakah.feature.pumpiq.prediction.model.WorkerOnPrediction
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -36,6 +43,8 @@ class DashboardViewModelTest {
     private lateinit var motorStateRepository: MotorStateRepository
     private lateinit var telemetryRepository: TelemetryRepository
     private lateinit var sendSmsCommandUseCase: SendSmsCommandUseCase
+    private lateinit var predictionEngine: PredictionEngine
+    private lateinit var faultRepository: FaultRepository
 
     @BeforeEach
     fun setup() {
@@ -43,6 +52,15 @@ class DashboardViewModelTest {
         motorStateRepository = mockk()
         telemetryRepository = mockk()
         sendSmsCommandUseCase = mockk()
+        predictionEngine = mockk()
+        faultRepository = mockk()
+        coEvery { predictionEngine.predictAll(any()) } returns PredictionResult(
+            powerFailure = PowerFailurePrediction(),
+            fault = FaultPrediction(),
+            workerOn = WorkerOnPrediction(),
+            forgotOff = ForgotOffPrediction()
+        )
+        coEvery { faultRepository.getFaultDistribution(any()) } returns Result.Success(emptyList())
     }
 
     @AfterEach
@@ -57,7 +75,13 @@ class DashboardViewModelTest {
         every { telemetryRepository.observeRecent(any()) } returns
             flowOf(Result.Success(emptyList()))
 
-        return DashboardViewModel(motorStateRepository, telemetryRepository, sendSmsCommandUseCase)
+        return DashboardViewModel(
+            motorStateRepository,
+            telemetryRepository,
+            sendSmsCommandUseCase,
+            predictionEngine,
+            faultRepository
+        )
     }
 
     @Test
@@ -84,7 +108,13 @@ class DashboardViewModelTest {
         every { telemetryRepository.observeRecent(any()) } returns
             flowOf(Result.Success(listOf(telemetry)))
 
-        val vm = DashboardViewModel(motorStateRepository, telemetryRepository, sendSmsCommandUseCase)
+        val vm = DashboardViewModel(
+            motorStateRepository,
+            telemetryRepository,
+            sendSmsCommandUseCase,
+            predictionEngine,
+            faultRepository
+        )
         advanceUntilIdle()
 
         val state = vm.uiState.value
@@ -110,7 +140,13 @@ class DashboardViewModelTest {
         every { telemetryRepository.observeRecent(any()) } returns
             flowOf(Result.Success(emptyList()))
 
-        val vm = DashboardViewModel(motorStateRepository, telemetryRepository, sendSmsCommandUseCase)
+        val vm = DashboardViewModel(
+            motorStateRepository,
+            telemetryRepository,
+            sendSmsCommandUseCase,
+            predictionEngine,
+            faultRepository
+        )
         advanceUntilIdle()
 
         val state = vm.uiState.value
@@ -128,7 +164,13 @@ class DashboardViewModelTest {
             flowOf(Result.Success(emptyList()))
         coEvery { sendSmsCommandUseCase(SmsCommand.Start) } returns Result.Error("Motor is already running")
 
-        val vm = DashboardViewModel(motorStateRepository, telemetryRepository, sendSmsCommandUseCase)
+        val vm = DashboardViewModel(
+            motorStateRepository,
+            telemetryRepository,
+            sendSmsCommandUseCase,
+            predictionEngine,
+            faultRepository
+        )
         advanceUntilIdle()
 
         vm.onEvent(DashboardUiEvent.StartPump)

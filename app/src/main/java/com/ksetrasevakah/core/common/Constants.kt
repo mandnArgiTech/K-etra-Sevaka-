@@ -4,9 +4,25 @@ package com.ksetrasevakah.core.common
  * App-wide constants shared across all modules and layers.
  */
 object Constants {
-    const val TARO_PANEL_NUMBER = "070936 52065"
-    const val INGESTION_MODEL_ID = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC"
-    const val ORCHESTRATOR_MODEL_ID = "Qwen2.5-3B-Instruct-q4f16_1-MLC"
+    const val TARO_PANEL_NUMBER = "7093652065"
+
+    /** Logical model ID for the on-device chat / orchestrator LLM. */
+    const val ORCHESTRATOR_MODEL_ID = "gemma3-1b-it"
+
+    /** LiteRT-LM model file stored under `filesDir/models/` after first-run download. */
+    const val ORCHESTRATOR_MODEL_FILENAME = "gemma3-1b-it-int4.litertlm"
+
+    /** HuggingFace litert-community download URL (must match an actual file in the repo). */
+    const val ORCHESTRATOR_MODEL_DOWNLOAD_URL =
+        "https://huggingface.co/litert-community/Gemma3-1B-IT/resolve/main/gemma3-1b-it-int4.litertlm"
+
+    /** Sentence embedding model (ONNX) + vocab for RAG */
+    const val EMBEDDING_ONNX_FILENAME = "minilm_l6_v2_model.onnx"
+    const val EMBEDDING_VOCAB_FILENAME = "vocab.txt"
+    const val EMBEDDING_ONNX_DOWNLOAD_URL =
+        "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/onnx/model.onnx"
+    const val EMBEDDING_VOCAB_DOWNLOAD_URL =
+        "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/vocab.txt"
     const val DB_NAME = "ksetra_sevakah_db"
     const val VECTOR_DB_DIR = "vector_store"
     const val BACKUP_FOLDER_NAME = "KsetraSevakah_Backup"

@@ -1,5 +1,7 @@
 package com.ksetrasevakah.core.vectorstore.di
 
+import com.ksetrasevakah.core.database.dao.VectorDocumentDao
+import com.ksetrasevakah.core.vectorstore.EmbeddingDownloader
 import com.ksetrasevakah.core.vectorstore.EmbeddingGenerator
 import com.ksetrasevakah.core.vectorstore.RagPipeline
 import com.ksetrasevakah.core.vectorstore.VectorStoreManager
@@ -15,11 +17,13 @@ object VectorStoreModule {
 
     @Provides
     @Singleton
-    fun provideVectorStoreManager(): VectorStoreManager = VectorStoreManager()
+    fun provideVectorStoreManager(dao: VectorDocumentDao): VectorStoreManager =
+        VectorStoreManager(dao)
 
     @Provides
     @Singleton
-    fun provideEmbeddingGenerator(): EmbeddingGenerator = EmbeddingGenerator()
+    fun provideEmbeddingGenerator(downloader: EmbeddingDownloader): EmbeddingGenerator =
+        EmbeddingGenerator(downloader)
 
     @Provides
     @Singleton
