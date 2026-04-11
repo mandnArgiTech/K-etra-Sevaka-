@@ -1,0 +1,1109 @@
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+11/04/26  11:19:25
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+11/04/26  10:58:25
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+11/04/26  10:44:00
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 352
+
+11/04/26  08:49:27
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+11/04/26  08:43:51
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+11/04/26  08:36:22
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+11/04/26  08:36:01
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+11/04/26  08:23:11
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+11/04/26  08:19:52
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+11/04/26  07:48:33
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+11/04/26  01:40:56
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+10/04/26  17:20:44
+Taro Smart Panel (3L):
+
+Alert!
+Dryrun
+Detected Current (R Y B) : 08.80 09.36 09.33
+
+10/04/26  14:32:43
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+10/04/26  11:08:52
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+10/04/26  10:58:47
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+10/04/26  10:53:50
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+10/04/26  09:40:19
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+10/04/26  09:27:57
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 352 352
+
+10/04/26  08:55:21
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+10/04/26  08:45:15
+Taro Smart Panel (3L):
+
+Power Resumed
+
+10/04/26  08:07:29
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+10/04/26  08:05:47
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 346 347 348
+
+10/04/26  08:03:40
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+10/04/26  07:57:50
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 352
+
+10/04/26  07:57:11
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+10/04/26  07:53:01
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+10/04/26  07:50:48
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+10/04/26  07:14:40
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 350
+
+10/04/26  07:12:58
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+10/04/26  07:12:45
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 351
+
+10/04/26  07:12:32
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+10/04/26  07:12:13
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 350
+
+10/04/26  07:10:43
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+10/04/26  07:10:31
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : APP
+
+10/04/26  05:51:03
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : APP
+
+10/04/26  05:50:00
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+10/04/26  04:01:51
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+10/04/26  02:45:31
+Taro Smart Panel (3L):
+
+Command Not Matched
+
+10/04/26  02:16:58
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 350 350
+
+10/04/26  02:14:58
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+10/04/26  02:14:50
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+09/04/26  16:43:40
+Taro Smart Panel (3L):
+
+Command Not Matched
+
+09/04/26  11:26:31
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : APP
+
+09/04/26  10:59:05
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+09/04/26  09:03:02
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+09/04/26  08:15:33
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+09/04/26  08:01:29
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+09/04/26  07:36:09
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+09/04/26  07:31:50
+Taro Smart Panel (3L):
+
+Command Not Matched
+
+09/04/26  07:17:10
+Taro Smart Panel (3L):
+
+Command Not Matched
+
+09/04/26  07:16:43
+Taro Smart Panel (3L):
+
+Command Not Matched
+
+09/04/26  07:16:15
+Taro Smart Panel (3L):
+
+Command Not Matched
+
+09/04/26  07:15:33
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+09/04/26  01:43:05
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+08/04/26  17:21:05
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+08/04/26  10:46:20
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+08/04/26  10:23:28
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+08/04/26  08:54:26
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+08/04/26  01:35:06
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+07/04/26  17:30:16
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+07/04/26  11:04:54
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+07/04/26  10:44:46
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+07/04/26  10:44:46
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+07/04/26  10:30:27
+Taro Smart Panel (3L):
+
+Alert!
+Dryrun
+Detected Current (R Y B) : 08.80 09.36 09.33
+
+07/04/26  10:06:18
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+07/04/26  07:43:36
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+07/04/26  01:36:58
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+06/04/26  17:24:58
+Taro Smart Panel (3L):
+
+Alert!
+Dryrun
+Detected Current (R Y B) : 08.80 09.36 09.33
+
+06/04/26  12:34:49
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+06/04/26  11:04:02
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+06/04/26  10:55:35
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+06/04/26  10:50:03
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+06/04/26  10:10:19
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+06/04/26  09:54:54
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+06/04/26  08:06:05
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+06/04/26  07:23:36
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+06/04/26  07:09:21
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+06/04/26  01:34:25
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+05/04/26  19:13:08
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+05/04/26  16:26:23
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+05/04/26  14:10:17
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+05/04/26  14:01:56
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+05/04/26  13:48:59
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+05/04/26  09:01:01
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+05/04/26  08:33:02
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+05/04/26  08:07:59
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+05/04/26  07:58:20
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+05/04/26  07:46:11
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+05/04/26  07:26:04
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+05/04/26  06:00:46
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+05/04/26  05:51:08
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+05/04/26  01:32:59
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+04/04/26  17:09:04
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+04/04/26  15:48:16
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+04/04/26  15:31:49
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+04/04/26  11:20:39
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+04/04/26  11:12:15
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+04/04/26  09:33:50
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+04/04/26  09:19:39
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 352 351
+
+04/04/26  08:56:49
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+04/04/26  08:47:29
+Taro Smart Panel (3L):
+
+Alert!
+R/B Phase Failure
+
+04/04/26  08:07:41
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+04/04/26  08:06:30
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+04/04/26  07:58:39
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+04/04/26  01:12:56
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+03/04/26  17:02:58
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+03/04/26  15:52:14
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+03/04/26  14:55:25
+Taro Smart Panel (3L):
+
+Alert!
+Y Phase Failure
+Detected Voltage (R Y B) : 015 015 015
+
+03/04/26  14:55:25
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+03/04/26  14:17:46
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+03/04/26  13:32:55
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+03/04/26  11:50:53
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+03/04/26  11:42:24
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 348 350 349
+
+03/04/26  11:00:31
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+03/04/26  10:59:58
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 353 352
+
+03/04/26  10:47:44
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+03/04/26  10:13:21
+Taro Smart Panel (3L):
+
+Alert!
+Y Phase Failure
+Detected Voltage (R Y B) : 190 192 381
+
+03/04/26  09:53:11
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+03/04/26  09:22:04
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+03/04/26  09:17:47
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+03/04/26  09:04:34
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+03/04/26  08:50:03
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 351
+
+03/04/26  08:21:58
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+03/04/26  08:21:47
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 351
+
+03/04/26  08:21:36
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+03/04/26  08:21:16
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 351
+
+03/04/26  08:20:56
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+03/04/26  08:18:27
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+03/04/26  02:23:15
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+02/04/26  17:02:57
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 352 352
+
+02/04/26  15:32:51
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  15:00:12
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned OFF
+via : Keypad
+
+02/04/26  14:53:16
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  14:35:07
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 350
+
+02/04/26  11:41:58
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  11:41:48
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 344 346 346
+
+02/04/26  10:16:10
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  10:16:01
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 352 351
+
+02/04/26  09:47:15
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  09:47:05
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 351
+
+02/04/26  08:17:01
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 351
+
+02/04/26  08:16:36
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  08:16:18
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+02/04/26  08:13:59
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+02/04/26  07:57:06
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 351 350
+
+02/04/26  07:46:26
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  07:46:17
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 349 350 349
+
+02/04/26  07:38:06
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 345 345 344
+
+02/04/26  07:27:26
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+02/04/26  07:27:16
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+02/04/26  07:25:45
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+02/04/26  07:16:47
+Taro Smart Panel (3L):
+
+Attention !
+Device Powered ON
+
+Motor Status :Off
+Mode :Manual
+
+02/04/26  01:34:19
+Taro Smart Panel (3L):
+
+Alert!
+Power Failure
+
+01/04/26  16:57:37
+Taro Smart Panel (3L):
+
+Alert!
+Low Voltage
+Detected Voltage (R Y B) : 348 349 349
+
+01/04/26  15:30:44
+Taro Smart Panel (3L):
+
+Attention!
+Motor Turned ON
+via : Keypad
+
+01/04/26  15:30:34
